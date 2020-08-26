@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>res/img/filesave.png</file>
+        <file>res/img/arrow-left.png</file>
+        <file>res/img/arrow-right.png</file>
+        <file>res/img/mask.png</file>
+        <file>res/img/logo.png</file>
+        <file>res/img/icons8-map-marker-48.png</file>
+        <file>res/img/icons8-save-48.png</file>
+        <file>res/img/icons8-settings-48.png</file>
+        <file>res/img/icons8-downloading-updates-48.png</file>
+        <file>res/img/icons8-microsoft-excel-48.png</file>
+        <file>res/img/KTA.png</file>
+        <file>res/img/icons8-delete-48.png</file>
+    </qresource>
+    <qresource prefix="/translations">
+        <file>res/translations/airway_ru.qm</file>
+    </qresource>
+    <qresource prefix="/qml">
+        <file>mapview.qml</file>
+    </qresource>
+</RCC>
