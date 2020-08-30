@@ -73,25 +73,25 @@ bool PointsModel::setData(const QModelIndex &index, const QVariant &value, int r
     return false;
 }
 
-void PointsModel::fetchMore(const QModelIndex &parent)
-{
-    int remainder = m_points.size() - m_pointCount;
-    int rowsToFetch = qMin(100, remainder);
+//void PointsModel::fetchMore(const QModelIndex &parent)
+//{
+//    int remainder = m_points.size() - m_pointCount;
+//    int rowsToFetch = qMin(100, remainder);
 
-    if (rowsToFetch <= 0)
-        return;
+//    if (rowsToFetch <= 0)
+//        return;
 
-    beginInsertRows(QModelIndex(), m_pointCount, m_pointCount + rowsToFetch - 1);
+//    beginInsertRows(QModelIndex(), m_pointCount, m_pointCount + rowsToFetch - 1);
 
-    m_pointCount += rowsToFetch;
+//    m_pointCount += rowsToFetch;
 
-    endInsertRows();
-}
+//    endInsertRows();
+//}
 
-bool PointsModel::canFetchMore(const QModelIndex &parent) const
-{
-    return (m_pointCount < m_points.size());
-}
+//bool PointsModel::canFetchMore(const QModelIndex &parent) const
+//{
+//    return (m_pointCount < m_points.size());
+//}
 
 void PointsModel::setDataModel(const QList<QVariant> &data)
 {

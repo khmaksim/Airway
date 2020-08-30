@@ -17,8 +17,8 @@ class PointsModel : public QAbstractTableModel
         bool setData(const QModelIndex &index, const QVariant &value, int role) override;
         QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
         Qt::ItemFlags flags(const QModelIndex &index) const override;
-        void fetchMore(const QModelIndex &parent);
-        bool canFetchMore(const QModelIndex &parent) const;
+//        void fetchMore(const QModelIndex &parent);
+//        bool canFetchMore(const QModelIndex &parent) const;
 
         void setDataModel(const QList<QVariant> &data);
 
