@@ -18,5 +18,6 @@
     </qresource>
     <qresource prefix="/qml">
         <file>mapview.qml</file>
+        <file>label.qml</file>
     </qresource>
 </RCC>

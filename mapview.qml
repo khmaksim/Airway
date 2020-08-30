@@ -225,24 +225,29 @@ Item {
         var polyline = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 2; line.color: "#000"; }', mapParent)
         var numPoints = path.length;
 
-        for (var i = 0; i < numPoints; i++)
+        for (var i = 0; i < numPoints;) {
             polyline.addCoordinate(QtPositioning.coordinate(path[i].x, path[i].y));
+            createPoint(QtPositioning.coordinate(path[i].x, path[i].y), mapParent);
+            createLabel(QtPositioning.coordinate(path[i].x, path[i].y), path[i + 1], mapParent);
+            i = i + 2;
+        }
 
         mapParent.addMapItem(polyline)
     }
 
-    function createLabel(coordinate, nameZone, codeIcao, nameSector, call, func, freq, mapParent) {
+    function createPoint(coordinate, mapParent) {
+        var point = Qt.createQmlObject('import QtLocation 5.14; MapCircle { radius: 3000; color: "#fff"; }', mapParent)
+        point.center = coordinate;
+        mapParent.addMapItem(point)
+    }
+
+    function createLabel(coordinate, codePoint, mapParent) {
         var component = Qt.createComponent("qrc:/qml/label.qml");
 
         if (component.status === Component.Ready) {
             var label = component.createObject(parent);
             label.coordinate = coordinate;
-            label.nameZone = nameZone
-            label.codeIcao = codeIcao;
-            label.nameSector = nameSector;
-            label.call = call;
-            label.func = func;
-            label.freq = freq;
+            label.codePoint = codePoint;
             mapParent.addMapItem(label);
         }
     }

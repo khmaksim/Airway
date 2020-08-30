@@ -169,6 +169,7 @@ void MainWindow::showAirways()
         mapView = new MapView;
 
     mapView->clearMap();
+    mapView->setTitle(tr("Airways"));
 
     bool setCenterMap = false;
     FilterPointsModel *filterPointsModel = qobject_cast<FilterPointsModel*>(ui->pointsTableView->model());
@@ -176,6 +177,7 @@ void MainWindow::showAirways()
 
     for (int row = 0; row < filterPointsModel->rowCount(); row++) {
         if (filterPointsModel->index(row, 0).data(Qt::CheckStateRole).toBool()) {
+            QString codePoint = filterPointsModel->index(row, 1).data().toString();
             double lat = Helper::convertCoordinateInDec(filterPointsModel->index(row, 4).data().toString());
             double lon = Helper::convertCoordinateInDec(filterPointsModel->index(row, 5).data().toString());
 
@@ -183,7 +185,7 @@ void MainWindow::showAirways()
                 mapView->setCenter(QPointF(lat, lon));
                 setCenterMap = true;
             }
-            points << QVariant(QPointF(lat, lon));
+            points << QVariant(QPointF(lat, lon)) << QVariant(codePoint);
         }
     }
     QMap<QString, QString> args;
@@ -223,6 +225,7 @@ void MainWindow::exportToFile()
 
     for (int row = 0; row < filterPointsModel->rowCount(); row++) {
         if (filterPointsModel->index(row, 0).data(Qt::CheckStateRole).toBool()) {
+            out << filterPointsModel->index(row, 1).data().toString() << endl;
             out << filterPointsModel->index(row, 4).data().toString().remove(QRegExp("[\\s\\.]")) << endl;
             out << filterPointsModel->index(row, 5).data().toString().remove(QRegExp("[\\s\\.]")) << endl;
         }

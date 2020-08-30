@@ -34,7 +34,7 @@ void SettingsDialog::writeSettings()
 {
     QSettings settings;
 
-    settings.beginGroup("connectDatabase");
+    settings.beginGroup("database");
     settings.setValue("file", ui->fileDatabaseLineEdit->text().simplified());
     settings.endGroup();
 
@@ -45,7 +45,7 @@ void SettingsDialog::readSettings()
 {
     QSettings settings;
 
-    settings.beginGroup("connectDatabase");
+    settings.beginGroup("database");
     ui->fileDatabaseLineEdit->setText(settings.value("file").toString());
     settings.endGroup();
 }
