@@ -176,12 +176,12 @@
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="231"/>
+        <location filename="mainwindow.cpp" line="234"/>
         <source>Export to file</source>
         <translation>Экспорт в файл</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="231"/>
+        <location filename="mainwindow.cpp" line="234"/>
         <source>Data export completed successfully.</source>
         <translation>Экспорт данных выполнен успешно.</translation>
     </message>
@@ -190,19 +190,17 @@
         <translation type="vanished">Поиск...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="207"/>
+        <location filename="mainwindow.cpp" line="209"/>
         <source>Save file</source>
         <translation>Сохранить файл</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="14"/>
-        <source>Airway</source>
-        <translation>Воздушная трасса</translation>
-    </message>
-    <message>
         <location filename="mainwindow.ui" line="44"/>
+        <location filename="mainwindow.cpp" line="172"/>
         <source>Airways</source>
-        <translation>Ввоздушные трассы</translation>
+        <oldsource>Airway</oldsource>
+        <translation>Воздушные трассы</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="53"/>

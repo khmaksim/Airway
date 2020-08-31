@@ -82,8 +82,6 @@ QVector<Record> DatabaseAccess::getPoints()
     QSqlQuery query(db);
     QVector<Record> points = QVector<Record>();
 
-//    query.exec("SELECT ap.code_airway, p.code, p.name, p.code_state, p.lat, p.lon "
-//               "FROM airway_point ap LEFT OUTER JOIN point p ON p.code = ap.code_point");
     query.exec("SELECT ap.code_airway, p.code, p.name, p.code_state, p.lat, p.lon "
                "FROM airway_point ap, point p WHERE p.code = ap.code_point ORDER BY ap.code_airway, ap.\"order\"");
 
