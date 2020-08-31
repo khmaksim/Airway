@@ -16,7 +16,7 @@ class FilterPointsModel : public QSortFilterProxyModel
         bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
 
     private:
-        QString codeAirway;
+        QStringList m_codeAirways;
 };
 
 #endif // FILTERPOINTSMODEL_H
