@@ -5,6 +5,7 @@ PointsModel::PointsModel(QObject *parent) : QAbstractTableModel(parent),
     m_checkedRows(QList<bool>())
 {
     m_headers << tr("*")
+              << tr("Code airway")
               << tr("Code PPM")
               << tr("Name PPM")
               << tr("State")
@@ -19,11 +20,15 @@ PointsModel::~PointsModel()
 
 int PointsModel::rowCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
+
     return m_points.size();
 }
 
 int PointsModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
+
     return m_headers.size();
 }
 
@@ -35,14 +40,11 @@ QVariant PointsModel::data(const QModelIndex &index, int role) const
     int row = index.row();
     int col = index.column();
 
-    if (index.column() == 0) {
-        if (role == Qt::CheckStateRole)
-            return (m_checkedRows.size() > 0 && m_checkedRows.at(row)) ? Qt::Checked : Qt::Unchecked;
-        else if (role == Qt::UserRole)
-            return m_points.at(row).toList().at(col);
-    }
+    if (index.column() == 0 && role == Qt::CheckStateRole)
+        return (m_checkedRows.size() > 0 && m_checkedRows.at(row)) ? Qt::Checked : Qt::Unchecked;
+
     if (role == Qt::DisplayRole)
-        return m_points.at(row).toList().at(col);
+        return m_points.at(row).toList().at(col - 1);
 
     return QVariant();
 }
