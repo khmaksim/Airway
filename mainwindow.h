@@ -43,6 +43,9 @@ class MainWindow : public QMainWindow
         void exportToFile();
         void filterPoints(const QModelIndex&);
         void setCheckedAllRowTable(bool checked = false);
+
+    private:
+        QStringList m_codeAirwayFilter;
 };
 
 #endif // MAINWINDOW_H

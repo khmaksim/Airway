@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_pointsModel = new PointsModel(this);
     FilterPointsModel *filterPointsModel = new FilterPointsModel(this);
     filterPointsModel->setSourceModel(m_pointsModel);
+    filterPointsModel->setFilterKeyColumn(1);
     QGroupHeaderView *groupHeaderView = new QGroupHeaderView(Qt::Horizontal, ui->pointsTableView);
     groupHeaderView->setCheckable(true);
     ui->pointsTableView->setHorizontalHeader(groupHeaderView);
@@ -100,6 +101,8 @@ void MainWindow::updateModels()
 
     for (QVector<Record>::const_iterator constIt = airways.constBegin(); constIt != airways.constEnd(); ++constIt) {
         QStandardItem *item = new QStandardItem((*constIt).first().toString());
+        item->setCheckable(true);
+        item->setData(Qt::Unchecked, Qt::CheckStateRole);
         m_airwaysModel->appendRow(item);
     }
     ui->airwayListView->repaint();
@@ -174,12 +177,22 @@ void MainWindow::showAirways()
     bool setCenterMap = false;
     FilterPointsModel *filterPointsModel = qobject_cast<FilterPointsModel*>(ui->pointsTableView->model());
     QList<QVariant> points = QList<QVariant>();
+    QMap<QString, QString> args;
 
     for (int row = 0; row < filterPointsModel->rowCount(); row++) {
         if (filterPointsModel->index(row, 0).data(Qt::CheckStateRole).toBool()) {
-            QString codePoint = filterPointsModel->index(row, 1).data().toString();
-            double lat = Helper::convertCoordinateInDec(filterPointsModel->index(row, 4).data().toString());
-            double lon = Helper::convertCoordinateInDec(filterPointsModel->index(row, 5).data().toString());
+            if (!args.isEmpty() && args.value("nameAirway") != filterPointsModel->index(row, 1).data().toString()) {
+                mapView->drawAirway(points, args);
+                points.clear();
+                args.clear();
+            }
+
+            if (args.isEmpty())
+                args.insert("nameAirway", filterPointsModel->index(row, 1).data().toString());
+
+            QString codePoint = filterPointsModel->index(row, 2).data().toString();
+            double lat = Helper::convertCoordinateInDec(filterPointsModel->index(row, 5).data().toString());
+            double lon = Helper::convertCoordinateInDec(filterPointsModel->index(row, 6).data().toString());
 
             if (!setCenterMap) {
                 mapView->setCenter(QPointF(lat, lon));
@@ -188,9 +201,9 @@ void MainWindow::showAirways()
             points << QVariant(QPointF(lat, lon)) << QVariant(codePoint);
         }
     }
-    QMap<QString, QString> args;
-    args.insert("nameAirway", ui->airwayListView->currentIndex().data().toString());
-    mapView->drawAirway(points, args);
+    // draw last airway
+    if (!args.isEmpty() && !points.isEmpty())
+        mapView->drawAirway(points, args);
 
     setCheckedAllRowTable();
     mapView->show();
@@ -236,8 +249,13 @@ void MainWindow::exportToFile()
 
 void MainWindow::filterPoints(const QModelIndex &index)
 {
+    if (index.data(Qt::CheckStateRole).toBool())
+        m_codeAirwayFilter << index.data().toString();
+    else
+        m_codeAirwayFilter.removeOne(index.data().toString());
+
     FilterPointsModel *filterPointsModel = qobject_cast<FilterPointsModel*>(ui->pointsTableView->model());
-    filterPointsModel->setFilterProperty("codeAirway", index.data().toString());
+    filterPointsModel->setFilterProperty("codeAirway", m_codeAirwayFilter);
     setCheckedAllRowTable();
 }
 
