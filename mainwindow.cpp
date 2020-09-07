@@ -201,11 +201,10 @@ void MainWindow::showAirways()
             points << QVariant(QPointF(lat, lon)) << QVariant(codePoint);
         }
     }
-    // draw last airway
+    // Draw last airway
     if (!args.isEmpty() && !points.isEmpty())
         mapView->drawAirway(points, args);
 
-    setCheckedAllRowTable();
     mapView->show();
 }
 
@@ -233,14 +232,20 @@ void MainWindow::exportToFile()
     }
     FilterPointsModel *filterPointsModel = qobject_cast<FilterPointsModel*>(ui->pointsTableView->model());
     QTextStream out(&file);
-
-    out << ui->airwayListView->currentIndex().data().toString() << endl;      // name airway
+    QString nameAirway = QString();
 
     for (int row = 0; row < filterPointsModel->rowCount(); row++) {
         if (filterPointsModel->index(row, 0).data(Qt::CheckStateRole).toBool()) {
-            out << filterPointsModel->index(row, 1).data().toString() << endl;
-            out << filterPointsModel->index(row, 4).data().toString().remove(QRegExp("[\\s\\.]")) << endl;
+            if (nameAirway != filterPointsModel->index(row, 1).data().toString()) {
+                if (!nameAirway.isEmpty())
+                    out << '1' << endl;
+
+                nameAirway = filterPointsModel->index(row, 1).data().toString();
+                out << nameAirway << endl;      // Write name airway
+            }
+            out << filterPointsModel->index(row, 2).data().toString() << endl;
             out << filterPointsModel->index(row, 5).data().toString().remove(QRegExp("[\\s\\.]")) << endl;
+            out << filterPointsModel->index(row, 6).data().toString().remove(QRegExp("[\\s\\.]")) << endl;
         }
     }
     if (file.commit())
