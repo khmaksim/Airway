@@ -173,7 +173,8 @@ Item {
         mapMapboxView.center = QtPositioning.coordinate(lat, lon);
     }
 
-    function getCenterOfPolygon(path){
+    function getCenterOfPolygon(path)
+    {
         var numPoints = path.length;
         var centerX = 0;
         var centerY = 0;
@@ -193,42 +194,35 @@ Item {
         return QtPositioning.mercatorToCoord(Qt.point(centerX, centerY));
     }
 
-    // Other bad method
-//    function getCenterOfPolygon(path){
-//        var x = 0;
-//        var y = 0;
-//        var z = 0;
-//        var lat1 = 0;
-//        var lon1 = 0;
-//        var numPoints = path.length;
+    function getCenterOfSection(path)
+    {
+        var centerX = 0;
+        var centerY = 0;
+        var point1 = QtPositioning.coordToMercator(path[0]);
+        var point2 = QtPositioning.coordToMercator(path[1]);
 
-//        for (var i = 0; i < numPoints - 1; i++) {
-//            var coordinate = QtPositioning.coordinate(path[i].x, path[i].y);
-//            lat1 = coordinate.latitude;
-//            lon1 = coordinate.longitude;
+        centerX = (point1.x + point2.x) / 2;
+        centerY = (point1.y + point2.y) / 2;
+        return QtPositioning.mercatorToCoord(Qt.point(centerX, centerY));
+    }
 
-//            lat1 = lat1 * Math.PI/180
-//            lon1 = lon1 * Math.PI/180
-//            x += Math.cos(lat1) * Math.cos(lon1)
-//            y += Math.cos(lat1) * Math.sin(lon1)
-//            z += Math.sin(lat1)
-//        }
-//        var lonCenter = Math.atan2(y, x)
-//        var Hyp = Math.sqrt(x * x + y * y)
-//        var latCenter = Math.atan2(z, Hyp)
-//        latCenter = latCenter * 180/Math.PI
-//        lonCenter = lonCenter * 180/Math.PI
-//        return QtPositioning.coordinate(latCenter, lonCenter);
-//    }
-
-    function createPolyline(path, mapParent) {
+    function createPolyline(points, nameAirway, mapParent) {
         var polyline = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 2; line.color: "#000"; }', mapParent)
-        var numPoints = path.length;
+        var numPoints = points.length;
+        var pointsSection = [];
 
         for (var i = 0; i < numPoints;) {
-            polyline.addCoordinate(QtPositioning.coordinate(path[i].x, path[i].y));
-            createPoint(QtPositioning.coordinate(path[i].x, path[i].y), mapParent);
-            createLabel(QtPositioning.coordinate(path[i].x, path[i].y), path[i + 1], mapParent);
+            var coordinate = QtPositioning.coordinate(points[i].x, points[i].y)
+            polyline.addCoordinate(coordinate);
+            createPoint(coordinate, mapParent);
+            createLabel(coordinate, points[i + 1], mapParent);
+
+            pointsSection.push(coordinate);
+
+            if (pointsSection.length === 2) {
+                createNameAirway(pointsSection, nameAirway, mapParent);
+                pointsSection.shift();
+            }
             i = i + 2;
         }
 
@@ -236,7 +230,7 @@ Item {
     }
 
     function createPoint(coordinate, mapParent) {
-        var point = Qt.createQmlObject('import QtLocation 5.14; MapCircle { radius: 3000; color: "#fff"; }', mapParent)
+        var point = Qt.createQmlObject('import QtLocation 5.14; MapCircle { radius: 1500; color: "#fff"; }', mapParent)
         point.center = coordinate;
         mapParent.addMapItem(point)
     }
@@ -247,17 +241,28 @@ Item {
         if (component.status === Component.Ready) {
             var label = component.createObject(parent);
             label.coordinate = coordinate;
-            label.codePoint = codePoint;
+            label.name = codePoint;
             mapParent.addMapItem(label);
         }
     }
 
-    function drawAirway(path, nameAirway) {
-        createPolyline(path, mapOsmView);
-        createPolyline(path, mapEsriView);
-        createPolyline(path, mapMapboxView);
+    function createNameAirway(sectionPoints, nameAirway, mapParent) {
+        var component = Qt.createComponent("qrc:/qml/label.qml");
 
-        var coordinate = getCenterOfPolygon(path);
+        if (component.status === Component.Ready) {
+            var nameAirwayLabel = component.createObject(parent);
+            nameAirwayLabel.coordinate = getCenterOfSection(sectionPoints);
+            nameAirwayLabel.name = nameAirway;
+            mapParent.addMapItem(nameAirwayLabel);
+        }
+    }
+
+    function drawAirway(points, nameAirway) {
+        createPolyline(points, nameAirway, mapOsmView);
+        createPolyline(points, nameAirway, mapEsriView);
+        createPolyline(points, nameAirway, mapMapboxView);
+
+//        var coordinate = getCenterOfPolygon(path);
 //        setLabelOfZone(coordinate, nameZone, codeIcao, nameSector, call, func, freq);
 
 //        polyline = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 3; line.color: "#FF4040"; }', mapEsriView)

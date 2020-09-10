@@ -250,6 +250,7 @@ void MainWindow::exportToFile()
     }
     if (file.commit())
         QMessageBox::information(this, tr("Export to file"), tr("Data export completed successfully."));
+    setCheckedAllRowTable();
 }
 
 void MainWindow::filterPoints(const QModelIndex &index)
