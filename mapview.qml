@@ -207,11 +207,21 @@ Item {
     }
 
     function createPolyline(points, nameAirway, mapParent) {
-        var polyline = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 2; line.color: "#000"; }', mapParent)
         var numPoints = points.length;
         var pointsSection = [];
+        var polyline = null;
 
         for (var i = 0; i < numPoints;) {
+            if (pointsSection.length === 0)
+                polyline = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 2; line.color: "#000"; }', mapParent)
+
+            // skip point and section too
+            if (points[i].x === 0 || points[i].y ===0) {
+                pointsSection.shift();
+                i = i + 2;
+                continue;
+            }
+
             var coordinate = QtPositioning.coordinate(points[i].x, points[i].y)
             polyline.addCoordinate(coordinate);
             createPoint(coordinate, mapParent);
@@ -222,15 +232,14 @@ Item {
             if (pointsSection.length === 2) {
                 createNameAirway(pointsSection, nameAirway, mapParent);
                 pointsSection.shift();
+                mapParent.addMapItem(polyline);
             }
             i = i + 2;
         }
-
-        mapParent.addMapItem(polyline)
     }
 
     function createPoint(coordinate, mapParent) {
-        var point = Qt.createQmlObject('import QtLocation 5.14; MapCircle { radius: 1500; color: "#fff"; }', mapParent)
+        var point = Qt.createQmlObject('import QtLocation 5.14; MapCircle { radius: 200; color: "#fff"; }', mapParent)
         point.center = coordinate;
         mapParent.addMapItem(point)
     }

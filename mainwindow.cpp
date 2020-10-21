@@ -19,6 +19,7 @@
 #include "model/filterpointsmodel.h"
 #include "model/pointsmodel.h"
 #include "qgroupheaderview.h"
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -180,16 +181,16 @@ void MainWindow::showAirways()
     QMap<QString, QString> args;
 
     for (int row = 0; row < filterPointsModel->rowCount(); row++) {
+        if (!args.isEmpty() && args.value("nameAirway") != filterPointsModel->index(row, 1).data().toString()) {
+            mapView->drawAirway(points, args);
+            points.clear();
+            args.clear();
+        }
+
+        if (args.isEmpty())
+            args.insert("nameAirway", filterPointsModel->index(row, 1).data().toString());
+
         if (filterPointsModel->index(row, 0).data(Qt::CheckStateRole).toBool()) {
-            if (!args.isEmpty() && args.value("nameAirway") != filterPointsModel->index(row, 1).data().toString()) {
-                mapView->drawAirway(points, args);
-                points.clear();
-                args.clear();
-            }
-
-            if (args.isEmpty())
-                args.insert("nameAirway", filterPointsModel->index(row, 1).data().toString());
-
             QString codePoint = filterPointsModel->index(row, 2).data().toString();
             double lat = Helper::convertCoordinateInDec(filterPointsModel->index(row, 5).data().toString());
             double lon = Helper::convertCoordinateInDec(filterPointsModel->index(row, 6).data().toString());
@@ -200,7 +201,11 @@ void MainWindow::showAirways()
             }
             points << QVariant(QPointF(lat, lon)) << QVariant(codePoint);
         }
+        else
+            points << QVariant(QPointF()) << QVariant(QString());
+
     }
+    qDebug() << points;
     // Draw last airway
     if (!args.isEmpty() && !points.isEmpty())
         mapView->drawAirway(points, args);
