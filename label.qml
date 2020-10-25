@@ -10,7 +10,6 @@ MapQuickItem {
         color: colorLabel
         text: name
         font.pixelSize: 6
-        anchors.left: parent.right
         anchors.leftMargin: 5
     }
 }

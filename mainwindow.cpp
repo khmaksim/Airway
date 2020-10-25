@@ -169,8 +169,10 @@ void MainWindow::enabledToolButton()
 
 void MainWindow::showAirways()
 {
-    if (mapView == nullptr)
+    if (mapView == nullptr) {
         mapView = new MapView;
+        connect(mapView, SIGNAL(checked(bool, QString, QString)), this, SLOT(setChecked(bool, QString, QString)));
+    }
 
     mapView->clearMap();
     mapView->setTitle(tr("Airways"));
@@ -205,11 +207,11 @@ void MainWindow::showAirways()
             points << QVariant(QPointF()) << QVariant(QString());
 
     }
-    qDebug() << points;
     // Draw last airway
     if (!args.isEmpty() && !points.isEmpty())
         mapView->drawAirway(points, args);
 
+    setCheckedAllRowTable();
     mapView->show();
 }
 
@@ -284,4 +286,15 @@ void MainWindow::setCheckedAllRowTable(bool checked)
 
     for (int row = 0; row < filterPointsModel->rowCount(); row++)
         m_pointsModel->setData(filterPointsModel->mapToSource(filterPointsModel->index(row, 0)), checked, Qt::CheckStateRole);
+}
+
+void MainWindow::setChecked(bool checked, QString codeAirway, QString codePoint)
+{
+    FilterPointsModel *filterPointsModel = qobject_cast<FilterPointsModel*>(ui->pointsTableView->model());
+
+    for (int row = 0; row < filterPointsModel->rowCount(); row++)
+        if (filterPointsModel->index(row, 1).data().toString().contains(codeAirway)
+                && filterPointsModel->index(row, 2).data().toString().contains(codePoint)) {
+            m_pointsModel->setData(filterPointsModel->mapToSource(filterPointsModel->index(row, 0)), checked, Qt::CheckStateRole);
+        }
 }

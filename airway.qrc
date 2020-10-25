@@ -19,5 +19,6 @@
     <qresource prefix="/qml">
         <file>mapview.qml</file>
         <file>label.qml</file>
+        <file>TurningPointRoute.qml</file>
     </qresource>
 </RCC>

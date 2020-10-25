@@ -29,8 +29,8 @@ class MapView : public QQuickView
 //        void addObstracle(ObstraclePoint);
         void drawAirway(QList<QVariant> &path, const QMap<QString, QString> &args);
 
-//    signals:
-//        void checked(bool, QString);
+    signals:
+        void checked(bool, QString, QString);
 };
 
 #endif // MAPVIEW_H

@@ -10,7 +10,8 @@ Item {
     visible: true
     width: 640
     height: 480
-    signal checked(bool f, string id);
+    signal checked(bool f, string codeAirway, string codePoint);
+    property var airways: []
 
     TabBar {
         id: toolBar
@@ -30,8 +31,8 @@ Item {
         width: parent.width
         anchors.top: toolBar.bottom
         anchors.bottom: parent.bottom
-
         currentIndex: toolBar.currentIndex
+
         Item {
             id: esriTab
 
@@ -45,27 +46,7 @@ Item {
 
                 MouseArea {
                     anchors.fill: parent
-
-//                    onDoubleClicked: {
-//                        var coordinate = mapEsriView.toCoordinate(Qt.point(mouse.x,mouse.y))
-//                        var numItems = mapEsriView.mapItems.length;
-
-//                        for (var i = 0; i < numItems; i++) {
-//                            if (mapEsriView.mapItems[i].objectName !== "circle") {
-//                                var coordinateObstracle = mapEsriView.mapItems[i].coordinate;
-//                                var d = 6371 * 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(degreesToRadians((coordinate.latitude - coordinateObstracle.latitude) / 2)), 2) +
-//                                                                       Math.cos(degreesToRadians(coordinateObstracle.latitude)) *
-//                                                                       Math.cos(degreesToRadians(coordinate.latitude)) *
-//                                                                       Math.pow(Math.sin(degreesToRadians(Math.abs(coordinate.longitude -
-//                                                                                                                   coordinateObstracle.longitude) / 2)), 2)));
-//                                if (d <= 0.05) {
-//                                    mapEsriView.mapItems[i].selected = !mapEsriView.mapItems[i].selected;
-//                                    root.checked(mapEsriView.mapItems[i].selected, mapEsriView.mapItems[i].idObstracle);
-//                                    break;
-//                                }
-//                            }
-//                        }
-//                    }
+                    onDoubleClicked: root.selectTurningPointRoute(Qt.point(mouse.x,mouse.y), mapEsriView)
                 }
             }
         }
@@ -82,27 +63,7 @@ Item {
 
                 MouseArea {
                     anchors.fill: parent
-
-//                    onDoubleClicked: {
-//                        var coordinate = mapOsmView.toCoordinate(Qt.point(mouse.x,mouse.y))
-//                        var numItems = mapOsmView.mapItems.length;
-
-//                        for (var i = 0; i < numItems; i++) {
-//                            if (mapOsmView.mapItems[i].objectName !== "circle") {
-//                                var coordinateObstracle = mapOsmView.mapItems[i].coordinate;
-//                                var d = 6371 * 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(degreesToRadians((coordinate.latitude - coordinateObstracle.latitude) / 2)), 2) +
-//                                                                       Math.cos(degreesToRadians(coordinateObstracle.latitude)) *
-//                                                                       Math.cos(degreesToRadians(coordinate.latitude)) *
-//                                                                       Math.pow(Math.sin(degreesToRadians(Math.abs(coordinate.longitude -
-//                                                                                                                   coordinateObstracle.longitude) / 2)), 2)));
-//                                if (d <= 0.05) {
-//                                    mapOsmView.mapItems[i].selected = !mapOsmView.mapItems[i].selected;
-//                                    root.checked(mapOsmView.mapItems[i].selected, mapOsmView.mapItems[i].idObstracle);
-//                                    break;
-//                                }
-//                            }
-//                        }
-//                    }
+                    onDoubleClicked: root.selectTurningPointRoute(Qt.point(mouse.x,mouse.y), mapOsmView)
                 }
             }
         }
@@ -120,40 +81,41 @@ Item {
                     }
                 }
 
-//                MouseArea {
-//                    anchors.fill: parent
-
-//                    onDoubleClicked: {
-//                        var coordinate = mapMapboxView.toCoordinate(Qt.point(mouse.x,mouse.y))
-//                        var numItems = mapMapboxView.mapItems.length;
-
-//                        for (var i = 0; i < numItems; i++) {
-//                            if (mapMapboxView.mapItems[i].objectName !== "circle") {
-//                                var coordinateObstracle = mapMapboxView.mapItems[i].coordinate;
-//                                var d = 6371 * 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(degreesToRadians((coordinate.latitude - coordinateObstracle.latitude) / 2)), 2) +
-//                                                                       Math.cos(degreesToRadians(coordinateObstracle.latitude)) *
-//                                                                       Math.cos(degreesToRadians(coordinate.latitude)) *
-//                                                                       Math.pow(Math.sin(degreesToRadians(Math.abs(coordinate.longitude -
-//                                                                                                                   coordinateObstracle.longitude) / 2)), 2)));
-//                                if (d <= 0.05) {
-//                                    mapMapboxView.mapItems[i].selected = !mapMapboxView.mapItems[i].selected;
-//                                    root.checked(mapMapboxView.mapItems[i].selected, mapMapboxView.mapItems[i].idObstracle);
-//                                    break;
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
+                MouseArea {
+                    anchors.fill: parent
+                    onDoubleClicked: root.selectTurningPointRoute(Qt.point(mouse.x,mouse.y), mapMapboxView)
+                }
             }
         }
     }
 
-    Component {
-        id: mapCircleComponent
-        MapCircle {
-            objectName: "circle"
-            border.width: 1
-            border.color: 'blue'
+//    Component {
+//        id: mapCircleComponent
+//        MapCircle {
+//            objectName: "circle"
+//            border.width: 1
+//            border.color: 'blue'
+//        }
+//    }
+
+    function selectTurningPointRoute(position, mapParent) {
+        var coordinate = mapParent.toCoordinate(position)
+        var numPoints = mapParent.mapItems.length;
+
+        for (var i = 0; i < numPoints; i++) {
+            if (mapParent.mapItems[i].objectName === "turningPointRoute") {
+                var coordinatePoint = mapParent.mapItems[i].center;
+                var d = 6371 * 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(degreesToRadians((coordinate.latitude - coordinatePoint.latitude) / 2)), 2) +
+                                                       Math.cos(degreesToRadians(coordinatePoint.latitude)) *
+                                                       Math.cos(degreesToRadians(coordinate.latitude)) *
+                                                       Math.pow(Math.sin(degreesToRadians(Math.abs(coordinate.longitude -
+                                                                                                   coordinatePoint.longitude) / 2)), 2)));
+                if (d <= 0.15) {
+                    mapParent.mapItems[i].select();
+                    root.checked(mapParent.mapItems[i].selected, mapParent.mapItems[i].codeAirway, mapParent.mapItems[i].codePoint);
+                    break;
+                }
+            }
         }
     }
 
@@ -206,7 +168,7 @@ Item {
         return QtPositioning.mercatorToCoord(Qt.point(centerX, centerY));
     }
 
-    function createPolyline(points, nameAirway, mapParent) {
+    function createPolyline(points, codeAirway, mapParent) {
         var numPoints = points.length;
         var pointsSection = [];
         var polyline = null;
@@ -223,14 +185,15 @@ Item {
             }
 
             var coordinate = QtPositioning.coordinate(points[i].x, points[i].y)
+            var codePoint = points[i + 1];
             polyline.addCoordinate(coordinate);
-            createPoint(coordinate, mapParent);
-            createLabel(coordinate, points[i + 1], mapParent);
+            createPoint(coordinate, codeAirway, codePoint, mapParent);
+            createLabel(coordinate, codePoint, mapParent);
 
             pointsSection.push(coordinate);
 
             if (pointsSection.length === 2) {
-                createNameAirway(pointsSection, nameAirway, mapParent);
+                createNameAirway(pointsSection, codeAirway, mapParent);
                 pointsSection.shift();
                 mapParent.addMapItem(polyline);
             }
@@ -238,10 +201,16 @@ Item {
         }
     }
 
-    function createPoint(coordinate, mapParent) {
-        var point = Qt.createQmlObject('import QtLocation 5.14; MapCircle { radius: 200; color: "#fff"; }', mapParent)
-        point.center = coordinate;
-        mapParent.addMapItem(point)
+    function createPoint(coordinate, codeAirway, codePoint, mapParent) {
+        var component = Qt.createComponent("qrc:/qml/TurningPointRoute.qml");
+
+        if (component.status === Component.Ready) {
+            var point = component.createObject(null);
+            point.center = coordinate;
+            point.codeAirway = codeAirway;
+            point.codePoint = codePoint;
+            mapParent.addMapItem(point);
+        }
     }
 
     function createLabel(coordinate, codePoint, mapParent) {
@@ -267,6 +236,7 @@ Item {
     }
 
     function drawAirway(points, nameAirway) {
+        root.airways.push(points);
         createPolyline(points, nameAirway, mapOsmView);
         createPolyline(points, nameAirway, mapEsriView);
         createPolyline(points, nameAirway, mapMapboxView);
