@@ -1,15 +1,66 @@
-import QtQuick 2.0
+import QtQuick 2.14
 import QtLocation 5.14
 
 MapQuickItem {
-    property string name: ""
+    property string textName: ""
     property color colorLabel: "#000"
+    property double rotation: 0
+    property double angleRoute: 0
     zoomLevel: 6.7
 
+    onRotationChanged: {
+        if (rotation >= 0 && rotation < 90)
+            rotation = (90 - rotation) * -1;
+        else if (rotation >= 90 && rotation < 180)
+            rotation = (90 - (180 - rotation));
+        else if (rotation >= 180 && rotation < 270)
+            rotation = (270 - rotation) * -1;
+        else if (rotation >= 270 && rotation <= 360)
+            rotation = (90 - (360 - rotation));
+    }
+
+    onAngleRouteChanged: {
+        console.log(angleRoute)
+        if (angleRoute > 0 && angleRoute <= 90) {
+            console.log("0-90")
+            anchorPoint.x = nameLabel.width
+            anchorPoint.y = nameLabel.height
+            console.log(nameLabel.width);
+        } else if (angleRoute > 90 && angleRoute <= 180) {
+            console.log("90-180")
+            anchorPoint.x = nameLabel.x
+            anchorPoint.y = nameLabel.height
+        } else if (angleRoute > 180 && angleRoute <= 270) {
+            console.log("180-270")
+            anchorPoint.x = nameLabel.x
+            anchorPoint.y = nameLabel.y
+        } else if (angleRoute > 270 && angleRoute <= 360) {
+            console.log("270-360")
+            anchorPoint.x = nameLabel.width
+            anchorPoint.y = nameLabel.y
+        }
+        // Set padding to point
+//        anchorPoint.x = anchorPoint.x + 3
+//        anchorPoint.y = anchorPoint.y + 3
+    }
+
+    onTextNameChanged: {
+//        anchorPoint.x = fontMetrics.advanceWidth(textName) / 2;
+//        console.log(fontMetrics.advanceWidth(textName));
+    }
+
+    FontMetrics {
+        id: fontMetrics
+        font.family: "Arial"
+    }
+
     sourceItem: Text {
+        id: nameLabel
+//        y: anchorPoint.y - fontMetrics.boundingRect(textName).height
         color: colorLabel
-        text: name
+        text: textName
         font.pixelSize: 6
-        anchors.leftMargin: 5
+//        horizontalAlignment: Text.AlignHCenter
+        transform: Rotation { angle: rotation  }
     }
 }

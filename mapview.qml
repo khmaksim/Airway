@@ -110,7 +110,7 @@ Item {
                                                        Math.cos(degreesToRadians(coordinate.latitude)) *
                                                        Math.pow(Math.sin(degreesToRadians(Math.abs(coordinate.longitude -
                                                                                                    coordinatePoint.longitude) / 2)), 2)));
-                if (d <= 0.15) {
+                if (d <= 0.80) {
                     mapParent.mapItems[i].select();
                     root.checked(mapParent.mapItems[i].selected, mapParent.mapItems[i].codeAirway, mapParent.mapItems[i].codePoint);
                     break;
@@ -120,7 +120,11 @@ Item {
     }
 
     function degreesToRadians(degrees) {
-        return (degrees * Math.PI)/180;
+        return (degrees * Math.PI) / 180;
+    }
+
+    function radiansToDegrees(radians) {
+        return radians * (180 / Math.PI);
     }
 
     function clearMap() {
@@ -168,33 +172,69 @@ Item {
         return QtPositioning.mercatorToCoord(Qt.point(centerX, centerY));
     }
 
+    function getAngle(point1, point2)
+    {
+        var p1Lat = degreesToRadians(point1.latitude);
+        var p1Lon = degreesToRadians(point1.longitude);
+        var p2Lat = degreesToRadians(point2.latitude);
+        var p2Lon = degreesToRadians(point2.longitude);
+        var cl1 = Math.cos(p1Lat)
+        var cl2 = Math.cos(p2Lat)
+        var sl1 = Math.sin(p1Lat)
+        var sl2 = Math.sin(p2Lat)
+        var delta = p2Lon - p1Lon
+        var cdelta = Math.cos(delta)
+        var sdelta = Math.sin(delta)
+        var x = (cl1 * sl2) - (sl1 * cl2 * cdelta)
+        var y = sdelta * cl2
+        var z = radiansToDegrees(Math.atan(-y / x))
+
+        if (x < 0)
+            z = z + 180.
+
+        var z2 = (z + 180.) % 360. - 180.
+        z2 = -degreesToRadians(z2)
+        var anglerad2 = z2 - ((2 * Math.PI) * Math.floor((z2 / (2 * Math.PI))))
+        var angledeg = (anglerad2 * 180.) / Math.PI
+
+        return angledeg;
+    }
+
     function createPolyline(points, codeAirway, mapParent) {
         var numPoints = points.length;
-        var pointsSection = [];
+        var pathPoints = [];
+        var codePoints = [];
         var polyline = null;
 
         for (var i = 0; i < numPoints;) {
-            if (pointsSection.length === 0)
+            if (pathPoints.length === 0)
                 polyline = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 2; line.color: "#000"; }', mapParent)
 
             // skip point and section too
-            if (points[i].x === 0 || points[i].y ===0) {
-                pointsSection.shift();
+            if (points[i].x === 0 || points[i].y === 0) {
+                pathPoints.shift();
                 i = i + 2;
                 continue;
             }
 
             var coordinate = QtPositioning.coordinate(points[i].x, points[i].y)
-            var codePoint = points[i + 1];
+
+            codePoints.push(points[i + 1]);
             polyline.addCoordinate(coordinate);
-            createPoint(coordinate, codeAirway, codePoint, mapParent);
-            createLabel(coordinate, codePoint, mapParent);
+            createPoint(coordinate, codeAirway, points[i + 1], mapParent);
 
-            pointsSection.push(coordinate);
+            pathPoints.push(coordinate);
 
-            if (pointsSection.length === 2) {
-                createNameAirway(pointsSection, codeAirway, mapParent);
-                pointsSection.shift();
+            if (pathPoints.length === 2) {
+                createNameAirway(pathPoints, codeAirway, mapParent);
+                createLabel(pathPoints, codePoints[0], mapParent);
+                if (!((i + 2) < numPoints)) {
+                    pathPoints.push(pathPoints[0]);
+                    pathPoints.shift();
+                    createLabel(pathPoints, codePoints[1], mapParent);
+                }
+                codePoints.shift();
+                pathPoints.shift();
                 mapParent.addMapItem(polyline);
             }
             i = i + 2;
@@ -213,13 +253,14 @@ Item {
         }
     }
 
-    function createLabel(coordinate, codePoint, mapParent) {
+    function createLabel(path, codePoint, mapParent) {
         var component = Qt.createComponent("qrc:/qml/label.qml");
 
         if (component.status === Component.Ready) {
             var label = component.createObject(parent);
-            label.coordinate = coordinate;
-            label.name = codePoint;
+            label.coordinate = path[0];
+            label.textName = codePoint;
+            label.angleRoute = getAngle(path[0], path[1]);
             mapParent.addMapItem(label);
         }
     }
@@ -230,7 +271,8 @@ Item {
         if (component.status === Component.Ready) {
             var nameAirwayLabel = component.createObject(parent);
             nameAirwayLabel.coordinate = getCenterOfSection(sectionPoints);
-            nameAirwayLabel.name = nameAirway;
+            nameAirwayLabel.textName = nameAirway;
+            nameAirwayLabel.rotation = getAngle(sectionPoints[0], sectionPoints[1]);
             mapParent.addMapItem(nameAirwayLabel);
         }
     }

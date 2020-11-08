@@ -6,8 +6,8 @@ MapCircle {
     property bool selected: false
     property string codeAirway: ""
     property string codePoint: ""
-    radius: 200
-    color: selected ? "red" : "#fff"
+    radius: 800
+    color: selected ? "red" : "#000"
 
     function select() {
         selected = !selected;
