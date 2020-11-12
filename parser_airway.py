@@ -51,44 +51,74 @@ def point_insert(connect, code_airway, point, order):
     connect.commit()
  
 def parse_airway(line):
-    airway_line = re.match( r'^\uf020(.*)\/(.*)', line[0])
+    if not isinstance(line[0], str):
+        return False
+
+    airway_line = re.match( r'^\uf020(.*)\/(.*)\s(\d*\.\d*)\sкм', ' '.join(str(x) for x in line))
 
     if airway_line:
         airway_name_ru = airway_line.group(1)
         airway_name_en = airway_line.group(2)
-        airway_distance = float(line[1].split(' ')[0])
+        airway_distance = float(airway_line.group(3))
+        # airway_distance = float(line[1].split(' ')[0])
         print(airway_name_ru, airway_name_en, airway_distance)
         return True
 
     return False
 
 def parse_airway_point(line):
-    point_airway_line = re.match( r'^[\uf072|\uf070]\uf020(.*)\/(.*)', line[0])
+    if not isinstance(line[0], str):
+        return False
+
+    point_airway_line = re.match( r'^[\uf072|\uf070]\uf020(.*)\/(.*)\s(\d*[NS])\s(\d*[EW])', ' '.join(str(x) for x in line))
 
     if point_airway_line:
         point_airway_name_ru = point_airway_line.group(1)
         point_airway_name_en = point_airway_line.group(2)
-        point_airway_coordinates = line[1]
-        print(point_airway_name_ru, point_airway_name_en, point_airway_coordinates)
+        point_airway_lat = point_airway_line.group(3)
+        point_airway_lon = point_airway_line.group(4)
+        print(point_airway_name_ru, point_airway_name_en, point_airway_lat, point_airway_lon)
         return True
 
     return False
 
 def parse_airway_point_detail(lines):
-    # print(lines)
-    # print(' '.join(str(x) for x in lines[0].flatten().tolist()).split(' ')[1:8])
+    print(' '.join(str(x) for x in lines[0]))
+    attr_airway = re.match(r'^(\d*\.?\d*)\s(\d*\.?\d*)\s(\w+\d*)\s(\d*\.?\d*)\s(\d*\.?\d*)\s(\S*)\s(\S*)', ' '.join(str(x) for x in lines[0]))
+    # attr_airway = re.match(r'(\d*\.?\d*)', ' '.join(str(x) for x in lines[0]))
+    attr_airway2 = re.match(r'(\d*\.?\d*)\s(\w+\d*)', ' '.join(str(x) for x in lines[1]))
+    print(attr_airway)
+    print(attr_airway2)
 
-    angle1, distance, top_border, height_min_abs, width, direction1, direction2 = ' '.join(str(x) for x in lines[0].flatten().tolist()).split(' ')[1:8]
-    angle2, bottom_border = ' '.join(str(x) for x in lines[1].flatten().tolist()).split(' ')[1:3]
-     # = lines[0][2]
-    # bottom_border = lines[1][2]
-    # height_min_abs = lines[0][3]
-    # width, direction1, direction2 = lines[0][2].split(' ')
-    # direction1 = lines[0][5]
-    # direction2 = lines[0][6]
+    if attr_airway and attr_airway2:
+        angle1 = attr_airway.group(1)
+        distance  = attr_airway.group(2)
+        top_border = attr_airway.group(3)
+        height_min_abs = attr_airway.group(4)
+        width = attr_airway.group(5)
+        direction = attr_airway.group(6)
+        direction2 = attr_airway.group(7)
+        angle2  = attr_airway2.group(1) 
+        bottom_border = attr_airway2.group(2)
 
-    print('{0}/{1}, {2}, {3}/{4}, {5}, {6}, {7}/{8}'.format(angle1[0:3], angle2[0:3], distance, top_border, bottom_border, height_min_abs, width, direction1, direction2))
-    return True
+        print('{0}/{1}, {2}, {3}/{4}, {5}, {6}, {7}/{8}'.format(angle1, angle2, distance, top_border, bottom_border, height_min_abs, width, direction1, direction2))
+        return True
+
+    return False
+
+def check_nan(line):
+    new_line = []
+    
+    for l in line:
+        if isinstance(l, str):
+            new_line.append(l)
+            continue
+
+        if not math.isnan(float(l)):
+            new_line.append(l)
+
+    return new_line
+
 
 if __name__ == '__main__':
     # print(extract_text_from_pdf('cbcng2008.pdf'))
@@ -100,7 +130,7 @@ if __name__ == '__main__':
         if path.exists(file):
             print('Read data...')
             # df = tabula.read_pdf(file, pages="all", stream=True)
-            df = tabula.read_pdf(file, pages=12, stream=True)
+            df = tabula.read_pdf(file, pages='12', stream=True)
             order = 0
 
             # pages
@@ -112,7 +142,9 @@ if __name__ == '__main__':
                 lines = []
                 i = 0
                 while i < len(df[p]):
-                    print(p,'-', i)
+                    print('{0}/{1}'.format(p, i))
+                    
+                    # Read data from header
                     line = df[p].columns
                     
                     if isinstance(line[0], str) == True and not read_columns:
@@ -122,17 +154,23 @@ if __name__ == '__main__':
                     line = df[p].values[i]
                     i = i + 1
 
-                    if isinstance(line[0], str) != True and math.isnan(float(line[0])):
+                    line = check_nan(line)
+                    # print(line)
+                    
+                    if len(line) == 0:
                         continue
 
                     if parse_airway(line):
                         continue
 
-                    # print(line) 
                     if parse_airway_point(line):
+                        lines = []
                         continue
 
-                    point_detail_begin_line = re.match( r'^\uf020$', line[0])
+                    if not isinstance(line[0], str):
+                        continue
+
+                    point_detail_begin_line = re.match( r'^\uf020', line[0])
 
                     if point_detail_begin_line:
                         lines.append(line)
