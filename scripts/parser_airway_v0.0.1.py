@@ -31,74 +31,64 @@ from os import path
 #     if text:
 #         return text
 
-def airway_insert(connect, code_ru, code_en, distance):
+def airway_insert(connect, code_airway):
 	cursor = connect.cursor()
-	cursor.execute("INSERT OR IGNORE INTO airway VALUES(:code_ru, :code_en, :distance)", 
-        {"code_ru": code_ru, "code_en": code_en, "distance": distance})
+	cursor.execute("INSERT OR IGNORE INTO airway_name VALUES(:code)", {"code": code_airway})
 	id = cursor.lastrowid
 	connect.commit()
 	return id
 
-def point_insert(connect, point):
+def point_insert(connect, code_airway, point, order):
     cursor = connect.cursor()
-    cursor.execute("INSERT OR IGNORE INTO point VALUES(:name_ru, :name_en, :lat, :lon)", 
-		{"name_ru": point['name_ru'], "name_en": point['name_en'], "lat": point['lat'], "lon": point['lon']})
+    cursor.execute("INSERT OR IGNORE INTO point VALUES(:code, :name, :code_state, :lat, :lon)", 
+		{"code": point['code_point'], "name": point['name_point'], "code_state": point['code_state'], "lat": point['lat'], "lon": point['lon']})
     id = cursor.lastrowid
-    connect.commit()
-    return id
+    if id == None:
+        id = code;
 
-def airway_point_insert(connect, point):
-    cursor = connect.cursor()
-    cursor.execute("INSERT OR IGNORE INTO airway_point VALUES(:code_airway, :code_point, :minimum_altitude, :width, "
-        ":direction_trains_forward, :direction_trains_back, :upper_limit, :lower_limit, :magnetic_track_angle_forward, "
-        "magnetic_track_angle_back, :order)", 
-    {"code_airway": code_airway, "code_point": point['code_point'], "minimum_altitude": point['minimum_altitude'], "width": point['width'],
-        "direction_trains_forward": point['direction_trains_forward'], "direction_trains_back": point['direction_trains_back'], 
-        "upper_limit": point['upper_limit'], "lower_limit": point['lower_limit'], "magnetic_track_angle_forward": point['magnetic_track_angle_forward'],
-        "magnetic_track_angle_back": point['magnetic_track_angle_back'], "order": point['order']})
+    cursor.execute("INSERT OR IGNORE INTO airway_point VALUES(:code_airway, :code_point, :order)", 
+    {"code_airway": code_airway, "code_point": point['code_point'], "order": order})
     connect.commit()
  
-def parse_airway(conn, line):
+def parse_airway(line):
     if not isinstance(line[0], str):
         return False
 
     airway_line = re.match( r'^\uf020(.*)\/(.*)\s(\d*\.\d*)\sкм', ' '.join(str(x) for x in line))
 
     if airway_line:
-        name_ru = airway_line.group(1)
-        name_en = airway_line.group(2)
-        distance = float(airway_line.group(3))
+        airway_name_ru = airway_line.group(1)
+        airway_name_en = airway_line.group(2)
+        airway_distance = float(airway_line.group(3))
         # airway_distance = float(line[1].split(' ')[0])
-        print(name_ru, name_en, distance)
-        airway_insert(conn, name_ru, name_en, distance)
+        print(airway_name_ru, airway_name_en, airway_distance)
         return True
 
     return False
 
-def parse_airway_point(conn, line):
+def parse_airway_point(line):
     if not isinstance(line[0], str):
         return False
 
     point_airway_line = re.match( r'^[\uf072|\uf070]\uf020(.*)\/(.*)\s(\d*[NS])\s(\d*[EW])', ' '.join(str(x) for x in line))
 
     if point_airway_line:
-        name_ru = point_airway_line.group(1)
-        name_en = point_airway_line.group(2)
-        lat = point_airway_line.group(3)
-        lon = point_airway_line.group(4)
-        point['name_ru'] = name_ru
-        point['name_en'] = name_en
-        point['lat'] = lat
-        point['lon'] = lon
-        print(name_ru, name_en, lat, lon)
-        id_point = point_insert(conn, point)
-        return id_point
+        point_airway_name_ru = point_airway_line.group(1)
+        point_airway_name_en = point_airway_line.group(2)
+        point_airway_lat = point_airway_line.group(3)
+        point_airway_lon = point_airway_line.group(4)
+        print(point_airway_name_ru, point_airway_name_en, point_airway_lat, point_airway_lon)
+        return True
 
-    return -1
+    return False
 
-def parse_airway_point_detail(conn, lines):
-    attr_airway = re.search(r'\s(\d*\.?\d*)\D\s(\d*\.?\d*)\s(\w+\d*)\s(\d*\.?\d*)\s(\d*\.?\d*)\s(\S*)\s(\S*)', ' '.join(str(x) for x in lines[0]))
-    attr_airway2 = re.search(r'\s(\d*\.?\d*)\D\s(\w+\d*)', ' '.join(str(x) for x in lines[1]))
+def parse_airway_point_detail(lines):
+    print(' '.join(str(x) for x in lines[0]))
+    attr_airway = re.match(r'^(\d*\.?\d*)\s(\d*\.?\d*)\s(\w+\d*)\s(\d*\.?\d*)\s(\d*\.?\d*)\s(\S*)\s(\S*)', ' '.join(str(x) for x in lines[0]))
+    # attr_airway = re.match(r'(\d*\.?\d*)', ' '.join(str(x) for x in lines[0]))
+    attr_airway2 = re.match(r'(\d*\.?\d*)\s(\w+\d*)', ' '.join(str(x) for x in lines[1]))
+    print(attr_airway)
+    print(attr_airway2)
 
     if attr_airway and attr_airway2:
         angle1 = attr_airway.group(1)
@@ -110,7 +100,8 @@ def parse_airway_point_detail(conn, lines):
         direction2 = attr_airway.group(7)
         angle2  = attr_airway2.group(1) 
         bottom_border = attr_airway2.group(2)
-        print('{0}/{1}, {2}, {3}/{4}, {5}, {6}, {7}/{8}'.format(angle1, angle2, distance, top_border, bottom_border, height_min_abs, width, direction, direction2))
+
+        print('{0}/{1}, {2}, {3}/{4}, {5}, {6}, {7}/{8}'.format(angle1, angle2, distance, top_border, bottom_border, height_min_abs, width, direction1, direction2))
         return True
 
     return False
@@ -139,7 +130,7 @@ if __name__ == '__main__':
         if path.exists(file):
             print('Read data...')
             # df = tabula.read_pdf(file, pages="all", stream=True)
-            df = tabula.read_pdf(file, pages='12-14', stream=True)
+            df = tabula.read_pdf(file, pages='12', stream=True)
             order = 0
 
             # pages
@@ -169,11 +160,10 @@ if __name__ == '__main__':
                     if len(line) == 0:
                         continue
 
-                    if parse_airway(conn, line):
+                    if parse_airway(line):
                         continue
 
-                    id_point = parse_airway_point(conn, line)
-                    if id_point != -1:
+                    if parse_airway_point(line):
                         lines = []
                         continue
 
@@ -186,7 +176,7 @@ if __name__ == '__main__':
                         lines.append(line)
 
                     if len(lines) == 2:
-                        parse_airway_point_detail(conn, lines)
+                        parse_airway_point_detail(lines)
                         lines = []
 
 
@@ -223,6 +213,4 @@ if __name__ == '__main__':
                     # print(code_airway, code_state, name_point, code_point, lat, lon)
                 # print('Insert data ot DB progress: {} %'.format(round(((p + 1) * 100) / len(df))))
                 # break;
-        else:
-            print('File not exist!')
     conn.close()
