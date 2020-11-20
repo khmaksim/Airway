@@ -99,8 +99,8 @@ def parse_airway_point(conn, line):
     return -1
 
 def parse_airway_point_detail(conn, lines, id_airway, id_point, order):
-    attr_airway = re.search(r'\s(\d*\.?\d*)\D\s(\d*\.?\d*)\s(\w+\d*)\s(\d*\.?\d*)\s(\d*\.?\d*)\s(\S*)\s(\S*)', ' '.join(str(x) for x in lines[0]))
-    attr_airway2 = re.search(r'\s(\d*\.?\d*)\D\s(\w+\d*)', ' '.join(str(x) for x in lines[1]))
+    attr_airway = re.search(r'\s(\d*\.?\d*)\D\s(\d*\.?\d*)\s(\w+\d*)\s(\d*\.?\d*)\s(\d*\.?\d*)\s?(\S*)?\s?(\S*)?', ' '.join(str(x) for x in lines[0]))
+    attr_airway2 = re.search(r'\s?(\d*\.?\d*)?\D?\s(\w+\d*)', ' '.join(str(x) for x in lines[1]))
     point = {}
     if attr_airway and attr_airway2:
         point['code_airway'] = id_airway
@@ -145,8 +145,8 @@ if __name__ == '__main__':
         if path.exists(file):
             print('Read data...')
             # df = tabula.read_pdf(file, pages="all", stream=True)
-            # df = tabula.read_pdf(file, pages='12-271', stream=True)
-            df = tabula.read_pdf(file, pages='12-13', stream=True)
+            df = tabula.read_pdf(file, pages='12-271', stream=True)
+            # df = tabula.read_pdf(file, pages='12-13', stream=True)
             order = 0
 
             # pages
@@ -208,7 +208,6 @@ if __name__ == '__main__':
                             code_point = 0
                         lines = []
 
-                print(code_point)
                 if code_point != 0:
                     point = {}
                     point['code_airway'] = code_airway
