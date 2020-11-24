@@ -7,9 +7,7 @@ SearchModel::SearchModel(QObject *parent)
 }
 
 SearchModel::~SearchModel()
-{
-
-}
+= default;
 
 bool SearchModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
   {

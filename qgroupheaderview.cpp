@@ -171,7 +171,8 @@ void QGroupHeaderView::paintHeader(QPainter *p, int logicalIndex, const QRect &r
     for (int i = 0; i < rowsCount; i++) {
         if (headerMatrix[logicalIndex][i].sectText == "")
             continue;
-        int wd(0), hg(0);
+        int wd(0);
+        int hg(0);
         for (int j = 0; j < headerMatrix[logicalIndex][i].colspan; j++)
             wd += sectionSize(logicalIndex+j);
         for (int j = 0; j < headerMatrix[logicalIndex][i].rowspan; j++)

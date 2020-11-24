@@ -26,7 +26,7 @@ class PointsModel : public QAbstractTableModel
         QStringList m_headers;
         QList<QVariant> m_points;
         QList<bool> m_checkedRows;
-        int m_pointCount;
+        int m_pointCount{};
 };
 
 #endif // POINTSMODEL_H

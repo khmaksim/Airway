@@ -23,12 +23,12 @@ DatabaseAccess::DatabaseAccess(QObject *parent) : QObject(parent)
 
     db.setDatabaseName(fileNameDatabase);
     if (db.open()) {
-        QMessageLogger(0, 0, 0).info("Connect database");
-        QMessageLogger(0, 0, 0).debug() << "file database" << fileNameDatabase;
+        QMessageLogger(nullptr, 0, nullptr).info("Connect database");
+        QMessageLogger(nullptr, 0, nullptr).debug() << "file database" << fileNameDatabase;
     }
     else {
-        QMessageLogger(0, 0, 0).warning("Failed to connect to the database");
-        QMessageLogger(0, 0, 0).debug() << db.lastError().text();
+        QMessageLogger(nullptr, 0, nullptr).warning("Failed to connect to the database");
+        QMessageLogger(nullptr, 0, nullptr).debug() << db.lastError().text();
         qDebug() << db.lastError().text();
     }
 

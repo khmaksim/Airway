@@ -10,7 +10,7 @@ class FilterPointsModel : public QSortFilterProxyModel
         explicit FilterPointsModel(QObject *parent = nullptr);
         ~FilterPointsModel();
 
-        void setFilterProperty(QString, QVariant);
+        void setFilterProperty(const QString&, const QVariant&);
 
     protected:
         bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;

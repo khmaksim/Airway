@@ -12,10 +12,9 @@ FilterPointsModel::FilterPointsModel(QObject *parent) : QSortFilterProxyModel(pa
 }
 
 FilterPointsModel::~FilterPointsModel()
-{
-}
+= default;
 
-void FilterPointsModel::setFilterProperty(QString filterName, QVariant value)
+void FilterPointsModel::setFilterProperty(const QString& filterName, const QVariant& value)
 {
     m_codeAirways.clear();
 

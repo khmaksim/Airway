@@ -28,7 +28,7 @@ QRect CheckboxItemDelegate::checkRect(const QStyleOptionViewItem& option, const 
     QRect cr = qApp->style()->subElementRect(QStyle::SE_ViewItemCheckIndicator, &opt);
     int deltaX = (bounding.width() - cr.width()) / 2;
     int deltaY = (bounding.height() - cr.height()) / 2;
-    return QRect(bounding.left() + deltaX, bounding.top() + deltaY, cr.width(), cr.height());
+    return {bounding.left() + deltaX, bounding.top() + deltaY, cr.width(), cr.height()};
 }
 
 bool CheckboxItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
@@ -46,7 +46,7 @@ bool CheckboxItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
         case QEvent::MouseButtonDblClick:
         {
             QRect cr(checkRect(option, option.rect));
-            QMouseEvent *me = static_cast<QMouseEvent*>(event);
+            auto *me = dynamic_cast<QMouseEvent*>(event);
             if (me->button() != Qt::LeftButton || !cr.contains(me->pos()))
                 return false;
 
@@ -57,7 +57,7 @@ bool CheckboxItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
         }
         case QEvent::KeyPress:
         {
-            QKeyEvent* kev = static_cast<QKeyEvent*>(event);
+            auto* kev = dynamic_cast<QKeyEvent*>(event);
             if(kev->key() != Qt::Key_Space && kev->key() != Qt::Key_Select)
                 return false;
             break;
@@ -65,6 +65,6 @@ bool CheckboxItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
         default: return false;
     }
 
-    int value = (index.data(Qt::CheckStateRole).toBool() ? false : true);
+    int value = (!index.data(Qt::CheckStateRole).toBool());
     return model->setData(index, value, Qt::CheckStateRole);
 }

@@ -14,9 +14,7 @@ PointsModel::PointsModel(QObject *parent) : QAbstractTableModel(parent),
 }
 
 PointsModel::~PointsModel()
-{
-
-}
+= default;
 
 int PointsModel::rowCount(const QModelIndex &parent) const
 {
@@ -41,7 +39,7 @@ QVariant PointsModel::data(const QModelIndex &index, int role) const
     int col = index.column();
 
     if (index.column() == 0 && role == Qt::CheckStateRole)
-        return (m_checkedRows.size() > 0 && m_checkedRows.at(row)) ? Qt::Checked : Qt::Unchecked;
+        return (!m_checkedRows.empty() && m_checkedRows.at(row)) ? Qt::Checked : Qt::Unchecked;
 
     if (role == Qt::DisplayRole)
         return m_points.at(row).toList().at(col - 1);
@@ -62,7 +60,7 @@ Qt::ItemFlags PointsModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return Qt::ItemIsEnabled;
 
-    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+    return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
 }
 
 bool PointsModel::setData(const QModelIndex &index, const QVariant &value, int role)

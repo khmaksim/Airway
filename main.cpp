@@ -17,10 +17,10 @@ int main(int argc, char *argv[])
 
     QTranslator translator;
     if (translator.load(QLocale(), QLatin1String("airway"), QLatin1String("_"), QLatin1String(":/translations/res/translations")))
-        a.installTranslator(&translator);
+        QApplication::installTranslator(&translator);
 
     MainWindow w;
     w.show();
 
-    return a.exec();
+    return QApplication::exec();
 }

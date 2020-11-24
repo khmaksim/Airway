@@ -6,13 +6,12 @@ ListItemDelegate::ListItemDelegate(QStyledItemDelegate *parent)
 }
 
 ListItemDelegate::~ListItemDelegate()
-{
-}
+= default;
 
 QSize ListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     if(!index.isValid())
-        return QSize();
+        return {};
 
     QString codeICAO = index.data(CodeICAORole).toString();
     QString nameAirfield = index.data(NameAirfieldRole).toString();
