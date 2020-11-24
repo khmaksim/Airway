@@ -195,8 +195,8 @@ void MainWindow::showAirways()
 
         if (filterPointsModel->index(row, 0).data(Qt::CheckStateRole).toBool()) {
             QString codePoint = filterPointsModel->index(row, 2).data().toString();
-            double lat = Helper::convertCoordinateInDec(filterPointsModel->index(row, 5).data().toString());
-            double lon = Helper::convertCoordinateInDec(filterPointsModel->index(row, 6).data().toString());
+            double lat = Helper::convertCoordinateInDec(filterPointsModel->index(row, 4).data().toString());
+            double lon = Helper::convertCoordinateInDec(filterPointsModel->index(row, 5).data().toString());
 
             if (!setCenterMap) {
                 mapView->setCenter(QPointF(lat, lon));
@@ -252,8 +252,8 @@ void MainWindow::exportToFile()
                 out << nameAirway << endl;      // Write name airway
             }
             out << filterPointsModel->index(row, 2).data().toString() << endl;
+            out << filterPointsModel->index(row, 4).data().toString().remove(QRegExp("[\\s\\.]")) << endl;
             out << filterPointsModel->index(row, 5).data().toString().remove(QRegExp("[\\s\\.]")) << endl;
-            out << filterPointsModel->index(row, 6).data().toString().remove(QRegExp("[\\s\\.]")) << endl;
         }
     }
     if (file.commit())
