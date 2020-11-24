@@ -25,6 +25,7 @@ class DatabaseAccess : public QObject
         QSqlDatabase db;
         QString fileNameDatabase;
 
+        void connect();
         void readSettings();
 
 //    signals:

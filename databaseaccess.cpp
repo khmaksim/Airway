@@ -14,6 +14,33 @@
 
 DatabaseAccess::DatabaseAccess(QObject *parent) : QObject(parent)
 {
+}
+
+DatabaseAccess* DatabaseAccess::getInstance()
+{
+    static DatabaseAccess instance;
+    instance.connect();
+    return &instance;
+}
+
+//DatabaseAccess* DatabaseAccess::getInstance()
+//{
+//    if(databaseAccess == 0)
+//       databaseAccess = new DatabaseAccess;
+//    return databaseAccess;
+//}
+
+void DatabaseAccess::readSettings()
+{
+    QSettings settings;
+
+    settings.beginGroup("database");
+    fileNameDatabase = settings.value("file").toString();
+    settings.endGroup();
+}
+
+void DatabaseAccess::connect()
+{
     readSettings();
 
     db = QSqlDatabase::addDatabase("QSQLITE", "airway");
@@ -35,34 +62,12 @@ DatabaseAccess::DatabaseAccess(QObject *parent) : QObject(parent)
     db.exec("PRAGMA FOREIGN_KEYS=ON");       //set support for foreign keys
 }
 
-DatabaseAccess* DatabaseAccess::getInstance()
-{
-    static DatabaseAccess instance;
-    return &instance;
-}
-
-//DatabaseAccess* DatabaseAccess::getInstance()
-//{
-//    if(databaseAccess == 0)
-//       databaseAccess = new DatabaseAccess;
-//    return databaseAccess;
-//}
-
-void DatabaseAccess::readSettings()
-{
-    QSettings settings;
-
-    settings.beginGroup("database");
-    fileNameDatabase = settings.value("file").toString();
-    settings.endGroup();
-}
-
 QVector<Record> DatabaseAccess::getAirways()
 {
     QSqlQuery query(db);
     QVector<Record> airways = QVector<Record>();
 
-    query.exec("SELECT code FROM airway_name ORDER BY code");
+    query.exec("SELECT code_ru FROM airway ORDER BY code_ru");
     while (query.next()) {
         Record record;
         QSqlRecord sqlRecord = query.record();
@@ -82,8 +87,8 @@ QVector<Record> DatabaseAccess::getPoints()
     QSqlQuery query(db);
     QVector<Record> points = QVector<Record>();
 
-    query.exec("SELECT ap.code_airway, p.code, p.name, p.code_state, p.lat, p.lon "
-               "FROM airway_point ap, point p WHERE p.code = ap.code_point ORDER BY ap.code_airway, ap.\"order\"");
+    query.exec("SELECT ap.code_airway, p.name_ru, p.name_ru, p.lat, p.lon "
+               "FROM airway_point ap, point p WHERE p.name_ru = ap.code_point ORDER BY ap.code_airway, ap.\"order\"");
 
     if (query.lastError().isValid())
         qDebug() << query.lastError().text() << query.lastQuery();

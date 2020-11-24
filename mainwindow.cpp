@@ -95,7 +95,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateModels()
 {
-    QVector<Record> airways = DatabaseAccess::getInstance()->getAirways();
+    auto databaseAccess = DatabaseAccess::getInstance();
+    QVector<Record> airways = databaseAccess->getAirways();
 
     // remove all rows
     m_airwaysModel->clear();
@@ -108,7 +109,7 @@ void MainWindow::updateModels()
     }
     ui->airwayListView->repaint();
 
-    QVector<Record> points = DatabaseAccess::getInstance()->getPoints();
+    QVector<Record> points = databaseAccess->getPoints();
     // uncheked header
 //    qobject_cast<QGroupHeaderView*>(ui->pointsTableView->horizontalHeader())->setChecked(false);
     QList<QVariant> data = QList<QVariant>();

@@ -8,7 +8,7 @@ PointsModel::PointsModel(QObject *parent) : QAbstractTableModel(parent),
               << tr("Code airway")
               << tr("Code PPM")
               << tr("Name PPM")
-              << tr("State")
+//              << tr("State")
               << tr("Latitude")
               << tr("Longitude");
 }
