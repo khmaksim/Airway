@@ -197,8 +197,8 @@ void MainWindow::showAirways()
 
         if (filterPointsModel->index(row, 0).data(Qt::CheckStateRole).toBool()) {
             QString codePoint = filterPointsModel->index(row, 2).data().toString();
-            double lat = Helper::convertCoordinateInDec(filterPointsModel->index(row, 4).data().toString());
-            double lon = Helper::convertCoordinateInDec(filterPointsModel->index(row, 5).data().toString());
+            double lat = Helper::convertCoordinateInDec(filterPointsModel->index(row, 3).data().toString());
+            double lon = Helper::convertCoordinateInDec(filterPointsModel->index(row, 4).data().toString());
 
             if (!setCenterMap) {
                 mapView->setCenter(QPointF(lat, lon));
