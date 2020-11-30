@@ -87,10 +87,10 @@ QVector<Record> DatabaseAccess::getPoints()
     QSqlQuery query(db);
     QVector<Record> points = QVector<Record>();
 
-    query.exec("SELECT ap.code_airway, p.name_ru, ap.magnetic_track_angle_forward, "
+    query.exec("SELECT ap.code_airway, p.name_ru, p.lat, p.lon, ap.magnetic_track_angle_forward, "
                "ap.magnetic_track_angle_back, ap.minimum_altitude, ap.width, "
                "ap.direction_trains_forward, ap.direction_trains_back, ap.upper_limit, ap.lower_limit, "
-               "p.name_ru, p.lat, p.lon "
+               "p.name_ru "
                "FROM airway_point ap, point p "
                "WHERE p.name_ru = ap.code_point ORDER BY ap.code_airway, ap.\"order\"");
 

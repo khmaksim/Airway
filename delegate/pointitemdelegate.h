@@ -2,9 +2,9 @@
 #define POINTITEMDELEGATE_H
 
 #include <QObject>
-#include <QStyledItemDelegate>
+#include <QItemDelegate>
 
-class PointItemDelegate : public QStyledItemDelegate
+class PointItemDelegate : public QItemDelegate
 {
         Q_OBJECT
 

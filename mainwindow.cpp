@@ -42,8 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     groupHeaderView->setCheckable(true);
     ui->pointsTableView->setHorizontalHeader(groupHeaderView);
     ui->pointsTableView->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-//    ui->pointsTableView->setModel(filterPointsModel);
-    ui->pointsTableView->setModel(m_pointsModel);
+    ui->pointsTableView->setModel(filterPointsModel);
     ui->pointsTableView->setItemDelegate(new PointItemDelegate(this));
     ui->pointsTableView->setItemDelegateForColumn(0, new CheckboxItemDelegate(this));
     ui->pointsTableView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
