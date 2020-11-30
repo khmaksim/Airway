@@ -1,6 +1,6 @@
 #include "listitemdelegate.h"
 
-ListItemDelegate::ListItemDelegate(QStyledItemDelegate *parent)
+ListItemDelegate::ListItemDelegate(QObject *parent)
 {
     Q_UNUSED(parent)
 }

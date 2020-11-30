@@ -49,7 +49,9 @@ def point_insert(connect, point):
 
 def airway_point_insert(connect, point):
     cursor = connect.cursor()
-    cursor.execute("INSERT OR IGNORE INTO airway_point VALUES(:code_airway, :code_point, :minimum_altitude, :width, "
+    cursor.execute("INSERT OR IGNORE INTO airway_point(code_airway, code_point, minimum_altitude, width, "
+        "direction_trains_forward, direction_trains_back, upper_limit, lower_limit, magnetic_track_angle_forward, "
+        "magnetic_track_angle_back, \"order\") VALUES(:code_airway, :code_point, :minimum_altitude, :width, "
         ":direction_trains_forward, :direction_trains_back, :upper_limit, :lower_limit, :magnetic_track_angle_forward, "
         ":magnetic_track_angle_back, :order)", 
     {"code_airway": point['code_airway'], "code_point": point['code_point'], "minimum_altitude": point['minimum_altitude'], "width": point['width'],
@@ -100,7 +102,7 @@ def parse_airway_point(conn, line):
 
 def parse_airway_point_detail(conn, lines, id_airway, id_point, order):
     attr_airway = re.search(r'\s(\d*\.?\d*)\D\s(\d*\.?\d*)\s(\w+\d*)\s(\d*\.?\d*)\s(\d*\.?\d*)\s?(\S*)?\s?(\S*)?', ' '.join(str(x) for x in lines[0]))
-    attr_airway2 = re.search(r'\s?(\d*\.?\d*)?\D?\s(\w+\d*)', ' '.join(str(x) for x in lines[1]))
+    attr_airway2 = re.search(r'\s(\d*\.?\d*)\D\s(\w+\d*)', ' '.join(str(x) for x in lines[1]))
     point = {}
     if attr_airway and attr_airway2:
         point['code_airway'] = id_airway

@@ -20,6 +20,13 @@ class PointsModel : public QAbstractTableModel
 //        void fetchMore(const QModelIndex &parent);
 //        bool canFetchMore(const QModelIndex &parent) const;
 
+        QStringList getMagneticTrackAngle(const QModelIndex&) const;
+        double getDistance(const QModelIndex &index) const;
+        double getMinimumAltitude(const QModelIndex &index) const;
+        double getWidth(const QModelIndex &index) const;
+        QStringList getDirectionTrains(const QModelIndex &index) const;
+        QStringList getLimit(const QModelIndex &index) const;
+
         void setDataModel(const QList<QVariant> &data);
 
     private:

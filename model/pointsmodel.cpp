@@ -6,11 +6,15 @@ PointsModel::PointsModel(QObject *parent) : QAbstractTableModel(parent),
 {
     m_headers << tr("*")
               << tr("Code airway")
-              << tr("Code PPM")
               << tr("Name PPM")
-//              << tr("State")
               << tr("Latitude")
-              << tr("Longitude");
+              << tr("Longitude")
+              << tr("MPU")
+              << tr("Distance")
+              << tr("Upper/lower limit")
+              << tr("Minimum altitude")
+              << tr("Width")
+              << tr("Direction trains");
 }
 
 PointsModel::~PointsModel()
@@ -101,4 +105,55 @@ void PointsModel::setDataModel(const QList<QVariant> &data)
     for (int i = 0; i < m_points.size(); i++)
         m_checkedRows.append(false);
     endResetModel();
+}
+
+QStringList PointsModel::getMagneticTrackAngle(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return {};
+
+    return QStringList() << m_points.at(index.row()).toList().at(2).toString()
+                         << m_points.at(index.row()).toList().at(3).toString();
+}
+
+double PointsModel::getDistance(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return {};
+
+    return 0;
+}
+
+double PointsModel::getMinimumAltitude(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return {};
+
+    return m_points.at(index.row()).toList().at(4).toDouble();
+}
+
+double PointsModel::getWidth(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return {};
+
+    return m_points.at(index.row()).toList().at(5).toDouble();
+}
+
+QStringList PointsModel::getDirectionTrains(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return {};
+
+    return QStringList() << m_points.at(index.row()).toList().at(6).toString()
+                         << m_points.at(index.row()).toList().at(7).toString();
+}
+
+QStringList PointsModel::getLimit(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return {};
+
+    return QStringList() << m_points.at(index.row()).toList().at(8).toString()
+                         << m_points.at(index.row()).toList().at(9).toString();
 }

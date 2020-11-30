@@ -13,7 +13,7 @@ class ListItemDelegate : public QStyledItemDelegate
     public:
         enum DataRole { CodeICAORole = Qt::UserRole + 1, NameAirfieldRole, IdRole };
 
-        explicit ListItemDelegate(QStyledItemDelegate *parent = 0);
+        explicit ListItemDelegate(QObject *parent = 0);
         ~ListItemDelegate();
 
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;

@@ -12,12 +12,13 @@
 #include <QLineEdit>
 #include <QSortFilterProxyModel>
 #include <QMessageBox>
-#include "checkboxitemdelegate.h"
 #include "mapview.h"
 #include "helper.h"
 #include "settingsdialog.h"
 #include "model/filterpointsmodel.h"
 #include "model/pointsmodel.h"
+#include "delegate/pointitemdelegate.h"
+#include "delegate/checkboxitemdelegate.h"
 #include "qgroupheaderview.h"
 #include <QDebug>
 
@@ -41,7 +42,9 @@ MainWindow::MainWindow(QWidget *parent) :
     groupHeaderView->setCheckable(true);
     ui->pointsTableView->setHorizontalHeader(groupHeaderView);
     ui->pointsTableView->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    ui->pointsTableView->setModel(filterPointsModel);
+//    ui->pointsTableView->setModel(filterPointsModel);
+    ui->pointsTableView->setModel(m_pointsModel);
+    ui->pointsTableView->setItemDelegate(new PointItemDelegate(this));
     ui->pointsTableView->setItemDelegateForColumn(0, new CheckboxItemDelegate(this));
     ui->pointsTableView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
     ui->pointsTableView->horizontalHeader()->setStretchLastSection(true);

@@ -28,6 +28,7 @@ INCLUDEPATH += delegate \
                 model
 
 SOURCES += \
+    delegate/pointitemdelegate.cpp \
         main.cpp \
     databaseaccess.cpp \
     mapview.cpp \
@@ -42,6 +43,7 @@ SOURCES += \
 
 HEADERS += \
     databaseaccess.h \
+    delegate/pointitemdelegate.h \
     mapview.h \
     mainwindow.h \
     delegate\listitemdelegate.h \
