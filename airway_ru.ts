@@ -161,27 +161,27 @@
         <translation type="vanished">Наименование сектора</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="52"/>
+        <location filename="mainwindow.cpp" line="56"/>
         <source>Export</source>
         <translation>Экспорт</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="58"/>
+        <location filename="mainwindow.cpp" line="62"/>
         <source>Unhide</source>
         <translation>Отобразить</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="63"/>
+        <location filename="mainwindow.cpp" line="67"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="234"/>
+        <location filename="mainwindow.cpp" line="262"/>
         <source>Export to file</source>
         <translation>Экспорт в файл</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="234"/>
+        <location filename="mainwindow.cpp" line="262"/>
         <source>Data export completed successfully.</source>
         <translation>Экспорт данных выполнен успешно.</translation>
     </message>
@@ -190,14 +190,14 @@
         <translation type="vanished">Поиск...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="209"/>
+        <location filename="mainwindow.cpp" line="231"/>
         <source>Save file</source>
         <translation>Сохранить файл</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="14"/>
         <location filename="mainwindow.ui" line="44"/>
-        <location filename="mainwindow.cpp" line="172"/>
+        <location filename="mainwindow.cpp" line="181"/>
         <source>Airways</source>
         <oldsource>Airway</oldsource>
         <translation>Воздушные трассы</translation>
@@ -476,8 +476,9 @@
     </message>
     <message>
         <location filename="model/pointsmodel.cpp" line="8"/>
-        <source>Code PPM</source>
-        <translation>Код ППМ</translation>
+        <source>Code airway</source>
+        <oldsource>Code PPM</oldsource>
+        <translation>Код трассы</translation>
     </message>
     <message>
         <location filename="model/pointsmodel.cpp" line="9"/>
@@ -485,17 +486,46 @@
         <translation>Наименование ППМ</translation>
     </message>
     <message>
-        <location filename="model/pointsmodel.cpp" line="10"/>
-        <source>State</source>
-        <translation>Государство</translation>
+        <location filename="model/pointsmodel.cpp" line="12"/>
+        <source>MPU</source>
+        <translation>МПУ</translation>
     </message>
     <message>
-        <location filename="model/pointsmodel.cpp" line="11"/>
+        <location filename="model/pointsmodel.cpp" line="13"/>
+        <source>Distance</source>
+        <translation>Расстояние</translation>
+    </message>
+    <message>
+        <location filename="model/pointsmodel.cpp" line="14"/>
+        <source>Upper/lower limit</source>
+        <translation>Верхняя/нижняя граница</translation>
+    </message>
+    <message>
+        <location filename="model/pointsmodel.cpp" line="15"/>
+        <source>Minimum altitude</source>
+        <translation>Минимальная абсолютная высота</translation>
+    </message>
+    <message>
+        <location filename="model/pointsmodel.cpp" line="16"/>
+        <source>Width</source>
+        <translation>Ширина</translation>
+    </message>
+    <message>
+        <location filename="model/pointsmodel.cpp" line="17"/>
+        <source>Direction trains</source>
+        <translation>Направление крейсерских эшелонов</translation>
+    </message>
+    <message>
+        <source>State</source>
+        <translation type="vanished">Государство</translation>
+    </message>
+    <message>
+        <location filename="model/pointsmodel.cpp" line="10"/>
         <source>Latitude</source>
         <translation>Широта</translation>
     </message>
     <message>
-        <location filename="model/pointsmodel.cpp" line="12"/>
+        <location filename="model/pointsmodel.cpp" line="11"/>
         <source>Longitude</source>
         <translation>Долгота</translation>
     </message>
@@ -763,17 +793,17 @@
 <context>
     <name>mapview</name>
     <message>
-        <location filename="mapview.qml" line="19"/>
+        <location filename="mapview.qml" line="20"/>
         <source>ESRI</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mapview.qml" line="22"/>
+        <location filename="mapview.qml" line="23"/>
         <source>OSM</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mapview.qml" line="25"/>
+        <location filename="mapview.qml" line="26"/>
         <source>Mapbox</source>
         <translation></translation>
     </message>
