@@ -181,9 +181,12 @@ void MainWindow::showAirways()
     mapView->setTitle(tr("Airways"));
 
     bool setCenterMap = false;
-    FilterPointsModel *filterPointsModel = qobject_cast<FilterPointsModel*>(ui->pointsTableView->model());
-    QList<QVariant> points = QList<QVariant>();
-    QMap<QString, QString> args;
+    auto *filterPointsModel = qobject_cast<FilterPointsModel*>(ui->pointsTableView->model());
+    auto *pointsModel = qobject_cast<PointsModel*>(filterPointsModel->sourceModel());
+
+    QList<QVariant> points = {};
+    QMap<QString, QVariant> point = {};
+    QMap<QString, QString> args = {};
 
     for (int row = 0; row < filterPointsModel->rowCount(); row++) {
         if (!args.isEmpty() && args.value("nameAirway") != filterPointsModel->index(row, 1).data().toString()) {
@@ -197,6 +200,7 @@ void MainWindow::showAirways()
 
         if (filterPointsModel->index(row, 0).data(Qt::CheckStateRole).toBool()) {
             QString codePoint = filterPointsModel->index(row, 2).data().toString();
+            QString distance = QString::number(pointsModel->getDistance(filterPointsModel->mapToSource(filterPointsModel->index(row, 7))));
             double lat = Helper::convertCoordinateInDec(filterPointsModel->index(row, 3).data().toString());
             double lon = Helper::convertCoordinateInDec(filterPointsModel->index(row, 4).data().toString());
 
@@ -204,10 +208,13 @@ void MainWindow::showAirways()
                 mapView->setCenter(QPointF(lat, lon));
                 setCenterMap = true;
             }
-            points << QVariant(QPointF(lat, lon)) << QVariant(codePoint);
+            point["coordinate"] = QVariant(QPointF(lat, lon));
+            point["code"] = QVariant(codePoint);
+            point["distance"] = QVariant(distance);
+            points << point;
         }
         else
-            points << QVariant(QPointF()) << QVariant(QString());
+            points << QMap<QString, QVariant>();
 
     }
     // Draw last airway

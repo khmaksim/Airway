@@ -20,22 +20,17 @@ MapQuickItem {
     }
 
     onAngleRouteChanged: {
-        console.log(angleRoute)
+//        console.log(angleRoute)
         if (angleRoute > 0 && angleRoute <= 90) {
-            console.log("0-90")
             anchorPoint.x = nameLabel.width
             anchorPoint.y = nameLabel.height
-            console.log(nameLabel.width);
         } else if (angleRoute > 90 && angleRoute <= 180) {
-            console.log("90-180")
             anchorPoint.x = nameLabel.x
             anchorPoint.y = nameLabel.height
         } else if (angleRoute > 180 && angleRoute <= 270) {
-            console.log("180-270")
             anchorPoint.x = nameLabel.x
             anchorPoint.y = nameLabel.y
         } else if (angleRoute > 270 && angleRoute <= 360) {
-            console.log("270-360")
             anchorPoint.x = nameLabel.width
             anchorPoint.y = nameLabel.y
         }

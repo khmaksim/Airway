@@ -120,11 +120,11 @@ Item {
     }
 
     function degreesToRadians(degrees) {
-        return (degrees * Math.PI) / 180;
+        return degrees * Math.PI / 180;
     }
 
     function radiansToDegrees(radians) {
-        return radians * (180 / Math.PI);
+        return radians * 180 / Math.PI;
     }
 
     function clearMap() {
@@ -193,10 +193,9 @@ Item {
             z = z + 180.
 
         var z2 = (z + 180.) % 360. - 180.
-        z2 = -degreesToRadians(z2)
+        z2 = -1 * degreesToRadians(z2)
         var anglerad2 = z2 - ((2 * Math.PI) * Math.floor((z2 / (2 * Math.PI))))
-        var angledeg = (anglerad2 * 180.) / Math.PI
-
+        var angledeg = radiansToDegrees(anglerad2)
         return angledeg;
     }
 
@@ -206,29 +205,36 @@ Item {
         var codePoints = [];
         var polyline = null;
 
-        for (var i = 0; i < numPoints;) {
+        for (var i = 0; i < numPoints; i++) {
             if (pathPoints.length === 0)
                 polyline = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 2; line.color: "#000"; }', mapParent)
 
+            var coordinateXY = points[i]['coordinate'];
+            var codePoint = points[i]['code'];
+            var distance = points[i]['distance'];
+
             // skip point and section too
-            if (points[i].x === 0 || points[i].y === 0) {
+            if (coordinateXY.x === 0 || coordinateXY.y === 0) {
                 pathPoints.shift();
-                i = i + 2;
                 continue;
             }
 
-            var coordinate = QtPositioning.coordinate(points[i].x, points[i].y)
+            var coordinate = QtPositioning.coordinate(coordinateXY.x, coordinateXY.y)
 
-            codePoints.push(points[i + 1]);
+            codePoints.push(codePoint);
             polyline.addCoordinate(coordinate);
-            createPoint(coordinate, codeAirway, points[i + 1], mapParent);
+            createPoint(coordinate, codeAirway, codePoint, mapParent);
 
             pathPoints.push(coordinate);
 
             if (pathPoints.length === 2) {
-                createNameAirway(pathPoints, codeAirway, mapParent);
+                var details = {}
+                details['codeAirway'] = codeAirway;
+                details['distance'] = distance;
+
+                createDetailsPath(pathPoints, details, mapParent);
                 createLabel(pathPoints, codePoints[0], mapParent);
-                if (!((i + 2) < numPoints)) {
+                if ((i + 1) >= numPoints) {
                     pathPoints.push(pathPoints[0]);
                     pathPoints.shift();
                     createLabel(pathPoints, codePoints[1], mapParent);
@@ -237,7 +243,6 @@ Item {
                 pathPoints.shift();
                 mapParent.addMapItem(polyline);
             }
-            i = i + 2;
         }
     }
 
@@ -265,15 +270,17 @@ Item {
         }
     }
 
-    function createNameAirway(sectionPoints, nameAirway, mapParent) {
-        var component = Qt.createComponent("qrc:/qml/label.qml");
+    function createDetailsPath(sectionPoints, details, mapParent) {
+        var component = Qt.createComponent("qrc:/qml/DetailsPathLabel.qml");
 
         if (component.status === Component.Ready) {
-            var nameAirwayLabel = component.createObject(parent);
-            nameAirwayLabel.coordinate = getCenterOfSection(sectionPoints);
-            nameAirwayLabel.textName = nameAirway;
-            nameAirwayLabel.rotation = getAngle(sectionPoints[0], sectionPoints[1]);
-            mapParent.addMapItem(nameAirwayLabel);
+            var detailsLabel = component.createObject(parent);
+            detailsLabel.coordinate = getCenterOfSection(sectionPoints);
+            detailsLabel.nameAirway = details['codeAirway'];
+            detailsLabel.distance = details['distance'];
+            detailsLabel.setRotation(getAngle(sectionPoints[0], sectionPoints[1]));
+            console.log(detailsLabel.rotation)
+            mapParent.addMapItem(detailsLabel);
         }
     }
 
