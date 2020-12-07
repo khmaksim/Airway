@@ -3,12 +3,21 @@ import QtQuick.Layouts 1.14
 import QtLocation 5.14
 
 MapQuickItem {
-    property string nameAirway: ""
-    property string distance: ""
+    property string magneticTrackAngle: ""
+    property string back: ""
     property color colorLabel: "#000"
     property double rotation: 0
     property double angleRoute: 0
     zoomLevel: 6.7
+//    anchorPoint.x: -layout.width/* / 2 - layout.width*/
+//    anchorPoint.y: layout.height / 2
+
+    onMagneticTrackAngleChanged: {
+        console.log(anchorPoint.x)
+        console.log(fontMetrics.advanceWidth(text))
+        anchorPoint.x = anchorPoint.x - fontMetrics.advanceWidth(text)
+        console.log(anchorPoint.x)
+    }
 
     onAngleRouteChanged: {
         if (angleRoute > 0 && angleRoute <= 90) {
@@ -29,44 +38,35 @@ MapQuickItem {
 //        anchorPoint.y = anchorPoint.y + 3
     }
 
-    onNameAirwayChanged: {
-//        anchorPoint.x = fontMetrics.advanceWidth(textName) / 2;
-//        console.log(fontMetrics.advanceWidth(textName));
-    }
-
     FontMetrics {
         id: fontMetrics
         font.family: "Arial"
     }
 
-    sourceItem: ColumnLayout {
+    sourceItem: /*ColumnLayout {
+        id: layout*/
         Text {
-            id: labelDistance
-//            Layout.alignment: Qt.AlignCenter
+            id: labelMagneticTrackAngleForward
             Layout.fillWidth: true
-//            Layout.fillHeight: true
-            //        y: anchorPoint.y - fontMetrics.boundingRect(textName).height
             color: colorLabel
-            text: distance
+            text: magneticTrackAngle
             font.pixelSize: 6
             horizontalAlignment: Text.AlignHCenter
-//            transform: Rotation { angle: rotation  }
+
+//            onTextChanged: parent.
+            transform: Rotation { angle: rotation  }
         }
-        Text {
-            id: labelAirway
-//            Layout.alignment: Qt.AlignCenter
-            Layout.fillWidth: true
-//            Layout.fillHeight: true
-            //        y: anchorPoint.y - fontMetrics.boundingRect(textName).height
-            color: colorLabel
-            text: nameAirway
-            font.pixelSize: 6
-            horizontalAlignment: Text.AlignHCenter
-//            transform: Rotation { angle: rotation  }
-        }
-        transform: Rotation { angle: rotation  }
-        spacing: 0
-    }
+//        Text {
+//            id: labelMagneticTrackAngleBack
+//            Layout.fillWidth: true
+//            color: colorLabel
+//            text: magneticTrackAngle.length > 1 ? magneticTrackAngle[1] : ""
+//            font.pixelSize: 6
+//            horizontalAlignment: Text.AlignHCenter
+//        }
+
+//        spacing: 0
+//    }
 
     function setRotation(rot) {
         if (rot >= 0 && rot < 90)

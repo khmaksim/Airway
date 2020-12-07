@@ -203,6 +203,8 @@ void MainWindow::showAirways()
             QString distance = QString::number(pointsModel->getDistance(filterPointsModel->mapToSource(filterPointsModel->index(row, 7))));
             double lat = Helper::convertCoordinateInDec(filterPointsModel->index(row, 3).data().toString());
             double lon = Helper::convertCoordinateInDec(filterPointsModel->index(row, 4).data().toString());
+            QStringList mpu = {};
+            mpu << pointsModel->getMagneticTrackAngle(filterPointsModel->mapToSource(filterPointsModel->index(row, 0)));
 
             if (!setCenterMap) {
                 mapView->setCenter(QPointF(lat, lon));
@@ -211,6 +213,7 @@ void MainWindow::showAirways()
             point["coordinate"] = QVariant(QPointF(lat, lon));
             point["code"] = QVariant(codePoint);
             point["distance"] = QVariant(distance);
+            point["mpu"] = QVariant(mpu);
             points << point;
         }
         else

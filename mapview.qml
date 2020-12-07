@@ -212,6 +212,9 @@ Item {
             var coordinateXY = points[i]['coordinate'];
             var codePoint = points[i]['code'];
             var distance = points[i]['distance'];
+            var magneticTrackAngle = points[i]['mpu'];
+
+            console.log(magneticTrackAngle);
 
             // skip point and section too
             if (coordinateXY.x === 0 || coordinateXY.y === 0) {
@@ -232,6 +235,7 @@ Item {
                 details['codeAirway'] = codeAirway;
                 details['distance'] = distance;
 
+                createMagneticTrackAngle(pathPoints, magneticTrackAngle, mapParent);
                 createDetailsPath(pathPoints, details, mapParent);
                 createLabel(pathPoints, codePoints[0], mapParent);
                 if ((i + 1) >= numPoints) {
@@ -270,17 +274,37 @@ Item {
         }
     }
 
-    function createDetailsPath(sectionPoints, details, mapParent) {
+    function createDetailsPath(points, details, mapParent) {
         var component = Qt.createComponent("qrc:/qml/DetailsPathLabel.qml");
 
         if (component.status === Component.Ready) {
             var detailsLabel = component.createObject(parent);
-            detailsLabel.coordinate = getCenterOfSection(sectionPoints);
+            detailsLabel.coordinate = getCenterOfSection(points);
             detailsLabel.nameAirway = details['codeAirway'];
             detailsLabel.distance = details['distance'];
-            detailsLabel.setRotation(getAngle(sectionPoints[0], sectionPoints[1]));
+            detailsLabel.setRotation(getAngle(points[0], points[1]));
             console.log(detailsLabel.rotation)
             mapParent.addMapItem(detailsLabel);
+        }
+    }
+
+    function createMagneticTrackAngle(points, magneticTrackAngle, mapParent) {
+        var component = Qt.createComponent("qrc:/qml/MagneticTrackAngleLabel.qml");
+
+        if (component.status === Component.Ready) {
+            if (magneticTrackAngle.length > 0) {
+                var labelForward = component.createObject(parent);
+                labelForward.coordinate = points[0]
+                labelForward.magneticTrackAngle = magneticTrackAngle[0];
+                labelForward.setRotation(getAngle(points[0], points[1]));
+                mapParent.addMapItem(labelForward);
+            }
+
+//            var labelBack = component.createObject(parent);
+//            labelBack.coordinate = points[1]
+//            labelBack.magneticTrackAngle = magneticTrackAngle;
+//            labelBack.setRotation(getAngle(points[0], points[1]));
+//            mapParent.addMapItem(labelBack);
         }
     }
 

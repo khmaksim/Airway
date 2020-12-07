@@ -21,5 +21,6 @@
         <file>label.qml</file>
         <file>TurningPointRoute.qml</file>
         <file>DetailsPathLabel.qml</file>
+        <file>MagneticTrackAngleLabel.qml</file>
     </qresource>
 </RCC>
