@@ -9,33 +9,21 @@ MapQuickItem {
     property double rotation: 0
     property double angleRoute: 0
     zoomLevel: 6.7
-//    anchorPoint.x: -layout.width/* / 2 - layout.width*/
-//    anchorPoint.y: layout.height / 2
-
-    onMagneticTrackAngleChanged: {
-        console.log(anchorPoint.x)
-        console.log(fontMetrics.advanceWidth(text))
-        anchorPoint.x = anchorPoint.x - fontMetrics.advanceWidth(text)
-        console.log(anchorPoint.x)
-    }
 
     onAngleRouteChanged: {
         if (angleRoute > 0 && angleRoute <= 90) {
-            anchorPoint.x = nameLabel.width
-            anchorPoint.y = nameLabel.height
+            anchorPoint.x = labelMagneticTrackAngleForward.width
+            anchorPoint.y = labelMagneticTrackAngleForward.height
         } else if (angleRoute > 90 && angleRoute <= 180) {
-            anchorPoint.x = nameLabel.x
-            anchorPoint.y = nameLabel.height
+            anchorPoint.x = labelMagneticTrackAngleForward.x
+            anchorPoint.y = labelMagneticTrackAngleForward.height
         } else if (angleRoute > 180 && angleRoute <= 270) {
-            anchorPoint.x = nameLabel.x
-            anchorPoint.y = nameLabel.y
+            anchorPoint.x = labelMagneticTrackAngleForward.x
+            anchorPoint.y = labelMagneticTrackAngleForward.y
         } else if (angleRoute > 270 && angleRoute <= 360) {
-            anchorPoint.x = nameLabel.width
-            anchorPoint.y = nameLabel.y
+            anchorPoint.x = labelMagneticTrackAngleForward.width
+            anchorPoint.y = labelMagneticTrackAngleForward.height
         }
-        // Set padding to point
-//        anchorPoint.x = anchorPoint.x + 3
-//        anchorPoint.y = anchorPoint.y + 3
     }
 
     FontMetrics {

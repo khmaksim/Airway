@@ -204,6 +204,7 @@ Item {
         var pathPoints = [];
         var codePoints = [];
         var polyline = null;
+        var magneticTrackAngle = [];
 
         for (var i = 0; i < numPoints; i++) {
             if (pathPoints.length === 0)
@@ -212,9 +213,8 @@ Item {
             var coordinateXY = points[i]['coordinate'];
             var codePoint = points[i]['code'];
             var distance = points[i]['distance'];
-            var magneticTrackAngle = points[i]['mpu'];
 
-            console.log(magneticTrackAngle);
+            magneticTrackAngle = points[i]['mpu'];
 
             // skip point and section too
             if (coordinateXY.x === 0 || coordinateXY.y === 0) {
@@ -235,7 +235,7 @@ Item {
                 details['codeAirway'] = codeAirway;
                 details['distance'] = distance;
 
-                createMagneticTrackAngle(pathPoints, magneticTrackAngle, mapParent);
+                createMagneticTrackAngle(pathPoints, magneticTrackAngle.slice(0, 1), mapParent);
                 createDetailsPath(pathPoints, details, mapParent);
                 createLabel(pathPoints, codePoints[0], mapParent);
                 if ((i + 1) >= numPoints) {
@@ -243,6 +243,8 @@ Item {
                     pathPoints.shift();
                     createLabel(pathPoints, codePoints[1], mapParent);
                 }
+                magneticTrackAngle.shift();
+                magneticTrackAngle.shift();
                 codePoints.shift();
                 pathPoints.shift();
                 mapParent.addMapItem(polyline);
@@ -283,14 +285,13 @@ Item {
             detailsLabel.nameAirway = details['codeAirway'];
             detailsLabel.distance = details['distance'];
             detailsLabel.setRotation(getAngle(points[0], points[1]));
-            console.log(detailsLabel.rotation)
             mapParent.addMapItem(detailsLabel);
         }
     }
 
     function createMagneticTrackAngle(points, magneticTrackAngle, mapParent) {
         var component = Qt.createComponent("qrc:/qml/MagneticTrackAngleLabel.qml");
-
+            console.log(magneticTrackAngle);
         if (component.status === Component.Ready) {
             if (magneticTrackAngle.length > 0) {
                 var labelForward = component.createObject(parent);
@@ -299,12 +300,13 @@ Item {
                 labelForward.setRotation(getAngle(points[0], points[1]));
                 mapParent.addMapItem(labelForward);
             }
-
-//            var labelBack = component.createObject(parent);
-//            labelBack.coordinate = points[1]
-//            labelBack.magneticTrackAngle = magneticTrackAngle;
-//            labelBack.setRotation(getAngle(points[0], points[1]));
-//            mapParent.addMapItem(labelBack);
+            if (magneticTrackAngle.length > 1) {
+                var labelBack = component.createObject(parent);
+                labelBack.coordinate = points[1]
+                labelBack.magneticTrackAngle = magneticTrackAngle[1];
+                labelBack.setRotation(getAngle(points[1], points[0]));
+                mapParent.addMapItem(labelBack);
+            }
         }
     }
 

@@ -31,7 +31,6 @@ MapQuickItem {
 
     onNameAirwayChanged: {
 //        anchorPoint.x = fontMetrics.advanceWidth(textName) / 2;
-//        console.log(fontMetrics.advanceWidth(textName));
     }
 
     FontMetrics {
