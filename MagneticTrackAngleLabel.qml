@@ -1,28 +1,45 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtLocation 5.14
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
+import QtLocation 5.12
 
 MapQuickItem {
     property string magneticTrackAngle: ""
-    property string back: ""
     property color colorLabel: "#000"
     property double rotation: 0
     property double angleRoute: 0
+    property string direction: ""
     zoomLevel: 6.7
 
     onAngleRouteChanged: {
-        if (angleRoute > 0 && angleRoute <= 90) {
-            anchorPoint.x = labelMagneticTrackAngleForward.width
-            anchorPoint.y = labelMagneticTrackAngleForward.height
-        } else if (angleRoute > 90 && angleRoute <= 180) {
-            anchorPoint.x = labelMagneticTrackAngleForward.x
-            anchorPoint.y = labelMagneticTrackAngleForward.height
-        } else if (angleRoute > 180 && angleRoute <= 270) {
-            anchorPoint.x = labelMagneticTrackAngleForward.x
-            anchorPoint.y = labelMagneticTrackAngleForward.y
-        } else if (angleRoute > 270 && angleRoute <= 360) {
-            anchorPoint.x = labelMagneticTrackAngleForward.width
-            anchorPoint.y = labelMagneticTrackAngleForward.height
+        if (direction === "forward") {
+            if (angleRoute > 0 && angleRoute <= 90) {
+                anchorPoint.x = labelMagneticTrackAngle.width
+                anchorPoint.y = labelMagneticTrackAngle.height
+            } else if (angleRoute > 90 && angleRoute <= 180) {
+                anchorPoint.x = labelMagneticTrackAngle.x
+                anchorPoint.y = labelMagneticTrackAngle.height
+            } else if (angleRoute > 180 && angleRoute <= 270) {
+                anchorPoint.x = labelMagneticTrackAngle.width + 1
+                anchorPoint.y = labelMagneticTrackAngle.height + 1
+            } else if (angleRoute > 270 && angleRoute <= 360) {
+                anchorPoint.x = labelMagneticTrackAngle.width
+                anchorPoint.y = labelMagneticTrackAngle.height
+            }
+        }
+        else {
+            if (angleRoute > 0 && angleRoute <= 90) {
+//                anchorPoint.x = labelMagneticTrackAngle.width
+//                anchorPoint.y = labelMagneticTrackAngle.height
+            } else if (angleRoute > 90 && angleRoute <= 180) {
+                anchorPoint.x = labelMagneticTrackAngle.width
+                anchorPoint.y = labelMagneticTrackAngle.height
+            } else if (angleRoute > 180 && angleRoute <= 270) {
+//                anchorPoint.x = -(labelMagneticTrackAngle.width + 1)
+//                anchorPoint.y = labelMagneticTrackAngle.height + 1
+            } else if (angleRoute > 270 && angleRoute <= 360) {
+                anchorPoint.x = labelMagneticTrackAngle.width
+//                anchorPoint.y = labelMagneticTrackAngle.height
+            }
         }
     }
 
@@ -31,32 +48,20 @@ MapQuickItem {
         font.family: "Arial"
     }
 
-    sourceItem: /*ColumnLayout {
-        id: layout*/
+    sourceItem: Row {
         Text {
-            id: labelMagneticTrackAngleForward
+            id: labelMagneticTrackAngle
             Layout.fillWidth: true
             color: colorLabel
-            text: magneticTrackAngle
+            text: (angleRoute > 0 && angleRoute <= 180) ? magneticTrackAngle + "\u2B9E" : "\u2B9C" + magneticTrackAngle
             font.pixelSize: 6
             horizontalAlignment: Text.AlignHCenter
-
-//            onTextChanged: parent.
-            transform: Rotation { angle: rotation  }
         }
-//        Text {
-//            id: labelMagneticTrackAngleBack
-//            Layout.fillWidth: true
-//            color: colorLabel
-//            text: magneticTrackAngle.length > 1 ? magneticTrackAngle[1] : ""
-//            font.pixelSize: 6
-//            horizontalAlignment: Text.AlignHCenter
-//        }
-
-//        spacing: 0
-//    }
+        transform: Rotation { origin.x: anchorPoint.x; origin.y: anchorPoint.y; angle: rotation  }
+    }
 
     function setRotation(rot) {
+        angleRoute = rot;
         if (rot >= 0 && rot < 90)
             rotation = (90 - rot) * -1;
         else if (rot >= 90 && rot < 180)

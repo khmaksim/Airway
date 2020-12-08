@@ -1,9 +1,9 @@
-import QtQuick 2.14
-import QtQuick.Window 2.14
-import QtLocation 5.14
-import QtPositioning 5.14
+import QtQuick 2.12
+import QtQuick.Window 2.12
+import QtLocation 5.12
+import QtPositioning 5.12
 import QtQuick.Controls 2.5
-import QtQuick.Layouts 1.14
+import QtQuick.Layouts 1.12
 
 Item {
     id: root
@@ -204,47 +204,49 @@ Item {
         var pathPoints = [];
         var codePoints = [];
         var polyline = null;
-        var magneticTrackAngle = [];
+        var pathsDetails = [];
 
         for (var i = 0; i < numPoints; i++) {
             if (pathPoints.length === 0)
-                polyline = Qt.createQmlObject('import QtLocation 5.13; MapPolyline { line.width: 2; line.color: "#000"; }', mapParent)
+                polyline = Qt.createQmlObject('import QtLocation 5.12; MapPolyline { line.width: 2; line.color: "#000"; }', mapParent)
 
+            var details = {};
             var coordinateXY = points[i]['coordinate'];
             var codePoint = points[i]['code'];
-            var distance = points[i]['distance'];
-
-            magneticTrackAngle = points[i]['mpu'];
 
             // skip point and section too
-            if (coordinateXY.x === 0 || coordinateXY.y === 0) {
+            if (!codePoint) {
                 pathPoints.shift();
                 continue;
             }
+
+            details['codeAirway'] = codeAirway;
+            details['distance'] = points[i]['distance'];
+            details['magneticTrackAngle'] = points[i]['mpu'];
+            pathsDetails.push(details);
 
             var coordinate = QtPositioning.coordinate(coordinateXY.x, coordinateXY.y)
 
             codePoints.push(codePoint);
             polyline.addCoordinate(coordinate);
             createPoint(coordinate, codeAirway, codePoint, mapParent);
-
             pathPoints.push(coordinate);
 
             if (pathPoints.length === 2) {
-                var details = {}
-                details['codeAirway'] = codeAirway;
-                details['distance'] = distance;
+                var magneticTrackAngle = pathsDetails[0]['magneticTrackAngle'];
+                var pathDetails = {};
+                pathDetails['codeAirway'] = pathsDetails[0]['codeAirway'];
+                pathDetails['distance'] = pathsDetails[0]['distance'];
 
-                createMagneticTrackAngle(pathPoints, magneticTrackAngle.slice(0, 1), mapParent);
-                createDetailsPath(pathPoints, details, mapParent);
+                createMagneticTrackAngle(pathPoints, magneticTrackAngle, mapParent);
+                createDetailsPath(pathPoints, pathDetails, mapParent);
                 createLabel(pathPoints, codePoints[0], mapParent);
                 if ((i + 1) >= numPoints) {
                     pathPoints.push(pathPoints[0]);
                     pathPoints.shift();
                     createLabel(pathPoints, codePoints[1], mapParent);
                 }
-                magneticTrackAngle.shift();
-                magneticTrackAngle.shift();
+                pathsDetails.shift();
                 codePoints.shift();
                 pathPoints.shift();
                 mapParent.addMapItem(polyline);
@@ -291,10 +293,11 @@ Item {
 
     function createMagneticTrackAngle(points, magneticTrackAngle, mapParent) {
         var component = Qt.createComponent("qrc:/qml/MagneticTrackAngleLabel.qml");
-            console.log(magneticTrackAngle);
+
         if (component.status === Component.Ready) {
             if (magneticTrackAngle.length > 0) {
                 var labelForward = component.createObject(parent);
+                labelForward.direction = "forward";
                 labelForward.coordinate = points[0]
                 labelForward.magneticTrackAngle = magneticTrackAngle[0];
                 labelForward.setRotation(getAngle(points[0], points[1]));
@@ -302,6 +305,7 @@ Item {
             }
             if (magneticTrackAngle.length > 1) {
                 var labelBack = component.createObject(parent);
+                labelBack.direction = "back";
                 labelBack.coordinate = points[1]
                 labelBack.magneticTrackAngle = magneticTrackAngle[1];
                 labelBack.setRotation(getAngle(points[1], points[0]));
@@ -326,23 +330,5 @@ Item {
 //            polyline.addCoordinate(QtPositioning.coordinate(path[i].x, path[i].y));
 ////            zoneBorder.addCoordinate(QtPositioning.coordinate(path[i].x, path[i].y));
 //        }
-//        mapEsriView.addMapItem(polyline)
-////        mapEsriView.addMapItem(zoneBorder)
-
     }
-
-//    function setLabelOfZone(coordinate, nameZone, codeIcao, nameSector, call, func, freq) {
-//        createLabel(coordinate, nameZone, codeIcao, nameSector, call, func, freq, mapOsmView);
-//        createLabel(coordinate, nameZone, codeIcao, nameSector, call, func, freq, mapEsriView);
-//        createLabel(coordinate, nameZone, codeIcao, nameSector, call, func, freq, mapMapboxView);
-//    }
-
-//    function drawRadius(radius) {
-//        var circle = mapCircleComponent.createObject(mapOsmView, {"center" : mapOsmView.center, "radius": radius * 1000});
-//        mapOsmView.addMapItem(circle);
-//        circle = mapCircleComponent.createObject(mapEsriView, {"center" : mapEsriView.center, "radius": radius * 1000});
-//        mapEsriView.addMapItem(circle);
-//        circle = mapCircleComponent.createObject(mapMapboxView, {"center" : mapMapboxView.center, "radius": radius * 1000});
-//        mapMapboxView.addMapItem(circle);
-//    }
 }

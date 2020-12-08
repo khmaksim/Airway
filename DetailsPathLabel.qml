@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtLocation 5.14
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
+import QtLocation 5.12
 
 MapQuickItem {
     property string nameAirway: ""

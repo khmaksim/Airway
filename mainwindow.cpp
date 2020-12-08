@@ -250,7 +250,9 @@ void MainWindow::exportToFile()
         qDebug() << file.errorString();
         return;
     }
-    FilterPointsModel *filterPointsModel = qobject_cast<FilterPointsModel*>(ui->pointsTableView->model());
+    auto *filterPointsModel = qobject_cast<FilterPointsModel*>(ui->pointsTableView->model());
+    auto *pointsModel = qobject_cast<PointsModel*>(filterPointsModel->sourceModel());
+
     QTextStream out(&file);
     QString nameAirway = QString();
 
@@ -263,9 +265,11 @@ void MainWindow::exportToFile()
                 nameAirway = filterPointsModel->index(row, 1).data().toString();
                 out << nameAirway << endl;      // Write name airway
             }
-            out << filterPointsModel->index(row, 2).data().toString() << endl;
+            out << filterPointsModel->index(row, 2).data().toString() << endl;                                                                  // Name point
+            out << filterPointsModel->index(row, 3).data().toString().remove(QRegExp("[\\s\\.]")) << endl;
             out << filterPointsModel->index(row, 4).data().toString().remove(QRegExp("[\\s\\.]")) << endl;
-            out << filterPointsModel->index(row, 5).data().toString().remove(QRegExp("[\\s\\.]")) << endl;
+            out << pointsModel->getMagneticTrackAngle(filterPointsModel->mapToSource(filterPointsModel->index(row, 0))).join("/") << endl;      // Magnetic track angle
+            out << pointsModel->getDistance(filterPointsModel->mapToSource(filterPointsModel->index(row, 0))) << endl;                          // Distance
         }
     }
     if (file.commit())
