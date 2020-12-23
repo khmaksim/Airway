@@ -49,13 +49,30 @@ MapQuickItem {
     }
 
     sourceItem: Row {
+        Image {
+            source: "qrc:/images/res/img/left-arrow.png"
+            visible: angleRoute > 180
+            fillMode: Image.PreserveAspectFit
+            height: labelMagneticTrackAngle.height
+            width: height
+            verticalAlignment: Image.AlignVCenter
+        }
         Text {
             id: labelMagneticTrackAngle
             Layout.fillWidth: true
             color: colorLabel
-            text: (angleRoute > 0 && angleRoute <= 180) ? magneticTrackAngle + "\u2B9E" : "\u2B9C" + magneticTrackAngle
+            text: magneticTrackAngle
             font.pixelSize: 6
+            verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
+        }
+        Image {
+            source: "qrc:/images/res/img/right-arrow.png"
+            visible: (angleRoute > 0 && angleRoute <= 180)
+            fillMode: Image.PreserveAspectFit
+            height: labelMagneticTrackAngle.height
+            width: height
+            verticalAlignment: Image.AlignVCenter
         }
         transform: Rotation { origin.x: anchorPoint.x; origin.y: anchorPoint.y; angle: rotation  }
     }

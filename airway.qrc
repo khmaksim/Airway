@@ -12,6 +12,8 @@
         <file>res/img/icons8-microsoft-excel-48.png</file>
         <file>res/img/KTA.png</file>
         <file>res/img/icons8-delete-48.png</file>
+        <file>res/img/left-arrow.png</file>
+        <file>res/img/right-arrow.png</file>
     </qresource>
     <qresource prefix="/translations">
         <file>res/translations/airway_ru.qm</file>
