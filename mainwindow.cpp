@@ -265,11 +265,12 @@ void MainWindow::exportToFile()
                 nameAirway = filterPointsModel->index(row, 1).data().toString();
                 out << nameAirway << endl;      // Write name airway
             }
-            out << filterPointsModel->index(row, 2).data().toString() << endl;                                                                  // Name point
+            out << filterPointsModel->index(row, 2).data().toString() << endl;                                                              // Name point
             out << filterPointsModel->index(row, 3).data().toString().remove(QRegExp("[\\s\\.]")) << endl;
             out << filterPointsModel->index(row, 4).data().toString().remove(QRegExp("[\\s\\.]")) << endl;
-            out << pointsModel->getMagneticTrackAngle(filterPointsModel->mapToSource(filterPointsModel->index(row, 0))).join("/") << endl;      // Magnetic track angle
-            out << pointsModel->getDistance(filterPointsModel->mapToSource(filterPointsModel->index(row, 0))) << endl;                          // Distance
+            out << pointsModel->getMagneticTrackAngle(filterPointsModel->mapToSource(filterPointsModel->index(row, 0))).at(0) << endl;      // Magnetic track angle forward
+            out << pointsModel->getMagneticTrackAngle(filterPointsModel->mapToSource(filterPointsModel->index(row, 0))).at(1) << endl;      // Magnetic track angle back
+            out << pointsModel->getDistance(filterPointsModel->mapToSource(filterPointsModel->index(row, 0))) << endl;                      // Distance
         }
     }
     if (file.commit())

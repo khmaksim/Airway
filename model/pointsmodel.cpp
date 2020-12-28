@@ -114,7 +114,7 @@ QStringList PointsModel::getMagneticTrackAngle(const QModelIndex &index) const
 
     if (m_points.at(index.row()).toList().at(4).toString().isEmpty() &&
             m_points.at(index.row()).toList().at(5).toString().isEmpty())
-        return {};
+        return QStringList() << "0" << "0";
 
     return QStringList() << m_points.at(index.row()).toList().at(4).toString()
                          << m_points.at(index.row()).toList().at(5).toString();

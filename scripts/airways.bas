@@ -466,6 +466,161 @@ Sub PlaceGeoLine(lat() as String, lon() as String)
     Next i
 End Sub 
 
+' Draw airway with details
+Sub DrawAirwayWithDetails(lat() As String, lon() As String, points() As String, nameAirway As String, distance As String)
+    Dim drLatt1 as Double, drLont1 as Double
+    Dim drLatt2 as Double, drLont2 as Double
+    Dim drX1 as Double, drY1 as Double, drX2 as Double, drY2 as Double
+    Dim angt as double, at1 as double, at2 as double
+	Dim i As Long
+
+    For i = LBound(lat) To UBound(lat) - 2
+		 ' Setting for line
+		MbeSendKeyIn "AC=100;"
+		MbeSendKeyIn "CO=96;"    ' 96 - black, 0 - red
+		MbeSendKeyIn "ACTIVE LEVEL=1;"      ' 17
+		MbeSendKeyIn "LV=1;"
+		MbeSendKeyIn "LC=0;" 'LC=220;
+		MbeSendKeyIn "WT=3;"
+		MbeSendKeyIn "PLACE LINE;"
+		
+        ' Conver to radian
+        drLatt1=LatToRad(ArincToRncLat(lat(i)))
+        drLont1=LonToRad(ArincToRncLon(lon(i)))
+        drLatt2=LatToRad(ArincToRncLat(lat(i + 1)))
+        drLont2=LonToRad(ArincToRncLon(lon(i + 1)))
+
+        fnXY drLatt1,drLont1,drX1,drY1
+        fnXY drLatt2,drLont2,drX2,drY2
+
+        'Draw line
+        MbeSendKeyIn "XY="+Str$(drX1)+","+Str$(drY1)+";"
+        MbeSendKeyIn "XY="+Str$(drX2)+","+Str$(drY2)+";"
+	
+		'MbeSendReset
+		'MbeSendKeyIn "AC=100;"
+		'MbeSendKeyIn "CO=96;"
+		'MbeSendKeyIn "ACTIVE LEVEL=17;"
+		'MbeSendKeyIn "PLACE LINE;"
+		'MbeSendKeyIn "XY=" + Str$(drX1) + "," + Str$(drY1) + ";"
+		'MbeSendKeyIn "XY=" + Str$(drX2) + "," + Str$(drY2) + ";"
+		'MbeSendReset
+			
+			'if drX2>drX1 then'
+			'at1='
+		angt=atn((drY1-drY2) / (drX1-drX2))
+			'if drY1 > drY2 then'
+			'       MbeSendKeyIn "ACTIVE ANGLE="+Str$(180+angt*57.295779)'
+			'else'
+		MbeSendKeyIn "ACTIVE ANGLE="+Str$(angt*57.295779)
+			'End If'
+			
+		MbeSendKeyIn "CO=96;"
+		MbeSendKeyIn "TH=2.3;"
+		MbeSendKeyIn "TW=1.8;"
+		MbeSendKeyIn "ACTIVE LEVEL=17;"
+		MbeSendKeyIn "ACTIVE FONT=ft-34;"
+		MbeSendKeyIn "PLACE TEXT BELOW;"+"167^"
+
+		Dim deltaX As Integer, deltaY As Integer
+
+		if drX1 < drX2 Then
+			deltaX = 1
+			Else
+					deltaX = -1
+			End If
+
+			if drY1 < drY2 Then
+			deltaY = -1
+			Else
+					deltaY = 1
+			End If
+
+		MbeSendKeyIn "XY=" + Str$(drX1 + deltaX * cos(angt)) + "," + Str$(drY1 + deltaY * sin(angt)) + ";"
+		MbeSendKeyIn "XY=" + Str$(drX2 + deltaX * cos(angt)) + "," + Str$(drY2 + deltaY * sin(angt)) + ";"
+			MbeSendReset
+
+		MbeSendKeyIn "CO=96;"
+		MbeSendKeyIn "TH=2.3;"
+		MbeSendKeyIn "TW=1.8;"
+		MbeSendKeyIn "ACTIVE LEVEL=17;"
+		MbeSendKeyIn "ACTIVE FONT=ft-34;"
+		MbeSendKeyIn "PLACE TEXT BELOW;"+"167^"
+		MbeSendKeyIn "XY=" + Str$(drX2 + deltaX * cos(angt)) + "," + Str$(drY2 + deltaY * sin(angt)) + ";"
+		MbeSendKeyIn "XY=" + Str$(drX1 + deltaX * cos(angt)) + "," + Str$(drY1 + deltaY * sin(angt)) + ";"
+		MbeSendReset
+			
+		Dim cenX as double, cenY as double
+		if drX2 > drX1 then
+			cenX = drX2 - abs(drX2 - drX1) / 2
+		else
+			cenX = drX2 + abs(drX2 - drX1) / 2
+		End If  
+		
+		if drY2 > drY1 then
+			cenY = drY2 - abs(drY2 - drY1) / 2
+		else
+			cenY = drY2 + abs(drY2 - drY1) / 2
+		End If  
+
+	   'MbeSendKeyIn "TH=1.65;"
+		'MbeSendKeyIn "TW=1.65;"
+		'MbeSendKeyIn "ACTIVE LEVEL=17;"
+			'MbeSendKeyIn "AC=BLOCK;"
+		'MbeSendKeyIn "PLACE CELL RELATIVE;"
+		'MbeSendKeyIn "XY="+Str$(cenX)+","+Str$(cenY)
+
+		If direction = "3" Then
+			MbeSendKeyIn "AC=ARROWR;"
+			MbeSendKeyIn "CO=96;"
+			MbeSendKeyIn "PLACE CELL RELATIVE;"
+				MbeSendKeyIn "XY=" + Str$(drX1 + 1 * cos(angt) + 2.4 * sin(angt)) + "," + Str$((drY1 + 1 * sin(angt)) - 2.4 * cos(angt)) + ";"
+				MbeSendKeyIn "AC=ARROWR;"
+			MbeSendKeyIn "PLACE CELL RELATIVE;"
+				MbeSendKeyIn "XY=" + Str$(drX2 - 1 * cos(angt) + 2.4 * sin(angt)) + "," + Str$((drY2 - 1 * sin(angt)) - 2.4 * cos(angt)) + ";"
+				MbeSendReset
+		End If
+	   
+		If direction = "3" Then
+			MbeSendKeyIn "AC=ARROWL;"
+			MbeSendKeyIn "CO=96;"
+			MbeSendKeyIn "PLACE CELL RELATIVE;"
+			MbeSendKeyIn "XY=" + Str$(drX1 + 8 * cos(angt) + 2.4 * sin(angt)) + "," + Str$(drY1 + 8 * sin(angt) - 2.4 * cos(angt)) + ";"
+			MbeSendKeyIn "AC=ARROWL;"
+			MbeSendKeyIn "PLACE CELL RELATIVE;"
+			MbeSendKeyIn "XY=" + Str$(drX2 - 6 * cos(angt) + 2.4 * sin(angt)) + "," + Str$(drY2 + 6 * sin(angt) - 2.4 * cos(angt)) + ";"
+			MbeSendReset
+		End If
+
+		MbeSendKeyIn "CO=96;"
+		MbeSendKeyIn "TH=1.75;"
+		MbeSendKeyIn "TW=1.45;"
+		MbeSendKeyIn "ACTIVE LEVEL=17;"
+		MbeSendKeyIn "ACTIVE FONT=ft-12;"
+		MbeSendKeyIn "PLACE TEXT ABOVE;"+Trim$(code)
+		MbeSendKeyIn "XY="+Str$(cenX)+","+Str$(cenY)+";"
+		MbeSendKeyIn "XY="+Str$(cenX+10)+","+Str$(cenY+10)+";"   
+		MbeSendReset
+
+		'MbeSendKeyIn "XY="+Str$(cenX-5)+","+Str$(cenY-5)'
+		'MbeSendKeyIn "PLACE LINE;"'
+		'MbeSendKeyIn "XY="+Str$(drX2)+","+Str$(drY2)'
+		'MbeSendKeyIn "XY="+Str$(cenX+5)+","+Str$(cenY+5)'
+			'MbeSendKeyIn "XY="+Str$(cenX+3*sin(angt))+","+Str$(cenY+3*cos(angt))'
+		
+		MbeSendKeyIn "CO=96;"
+		MbeSendKeyIn "TH=1.98;"
+		MbeSendKeyIn "TW=1.85;"
+		MbeSendKeyIn "ACTIVE FONT=ft-15;"       
+		MbeSendKeyIn "PLACE TEXT ON;"+Trim$(dist)
+		MbeSendKeyIn "XY="+Str$(cenX)+","+Str$(cenY)
+		MbeSendKeyIn "XY="+Str$(cenX+5*cos(angt))+","+Str$(cenY+5*sin(angt))
+		MbeSendReset
+		MbeSendReset
+	Next i
+    MbeSendReset
+End Sub 
+
 ' Draw airway
 Sub PlaceAirway(lat() As String, lon() As String, points() As String, nameAirway As String)
     Dim drLatt1 as Double, drLont1 as Double
@@ -555,7 +710,7 @@ Sub PlaceAirway(lat() As String, lon() As String, points() As String, nameAirway
     Next i
 End Sub 
 
-'Calculated center for area
+' Calculated center for area
 Sub GetCenterOfPolygon(lat() As String, lon() As String, nameZoneCodeIcao As String, nameSector As String, callFuncFreq As String)
     Dim drLatt1 as Double, drLont1 as Double
     Dim drLatt2 as Double, drLont2 as Double
