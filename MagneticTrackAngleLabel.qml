@@ -48,14 +48,18 @@ MapQuickItem {
         font.family: "Arial"
     }
 
-    sourceItem: Row {
+    sourceItem: RowLayout {
+        spacing: 0
+        property double sizeArrow: labelMagneticTrackAngle.height / 3
+
+
         Image {
-            source: "qrc:/images/res/img/left-arrow.png"
+            source: "qrc:/images/res/img/arrow_left.png"
             visible: angleRoute > 180
             fillMode: Image.PreserveAspectFit
-            height: labelMagneticTrackAngle.height
-            width: height
-            verticalAlignment: Image.AlignVCenter
+            Layout.maximumHeight: parent.sizeArrow
+            Layout.maximumWidth: parent.sizeArrow
+            Layout.alignment: Qt.AlignBaseline
         }
         Text {
             id: labelMagneticTrackAngle
@@ -64,15 +68,15 @@ MapQuickItem {
             text: magneticTrackAngle
             font.pixelSize: 6
             verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
+            horizontalAlignment: Text.AlignLeft
         }
         Image {
-            source: "qrc:/images/res/img/right-arrow.png"
+            source: "qrc:/images/res/img/arrow_right.png"
             visible: (angleRoute > 0 && angleRoute <= 180)
             fillMode: Image.PreserveAspectFit
-            height: labelMagneticTrackAngle.height
-            width: height
-            verticalAlignment: Image.AlignVCenter
+            Layout.maximumHeight: parent.sizeArrow
+            Layout.maximumWidth: parent.sizeArrow
+            Layout.alignment: Qt.AlignBaseline
         }
         transform: Rotation { origin.x: anchorPoint.x; origin.y: anchorPoint.y; angle: rotation  }
     }
