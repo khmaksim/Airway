@@ -31,8 +31,8 @@ MapQuickItem {
 //                anchorPoint.x = labelMagneticTrackAngle.width
 //                anchorPoint.y = labelMagneticTrackAngle.height
             } else if (angleRoute > 90 && angleRoute <= 180) {
-                anchorPoint.x = labelMagneticTrackAngle.width
-                anchorPoint.y = labelMagneticTrackAngle.height
+                anchorPoint.x = labelMagneticTrackAngle.x
+                anchorPoint.y = labelMagneticTrackAngle.y
             } else if (angleRoute > 180 && angleRoute <= 270) {
 //                anchorPoint.x = -(labelMagneticTrackAngle.width + 1)
 //                anchorPoint.y = labelMagneticTrackAngle.height + 1
@@ -50,8 +50,7 @@ MapQuickItem {
 
     sourceItem: RowLayout {
         spacing: 0
-        property double sizeArrow: labelMagneticTrackAngle.height / 3
-
+        property double sizeArrow: labelMagneticTrackAngle.height / 3.5
 
         Image {
             source: "qrc:/images/res/img/arrow_left.png"
@@ -59,16 +58,18 @@ MapQuickItem {
             fillMode: Image.PreserveAspectFit
             Layout.maximumHeight: parent.sizeArrow
             Layout.maximumWidth: parent.sizeArrow
-            Layout.alignment: Qt.AlignBaseline
+            Layout.alignment: Qt.AlignVCenter
         }
         Text {
             id: labelMagneticTrackAngle
-            Layout.fillWidth: true
             color: colorLabel
+            padding: 0
             text: magneticTrackAngle
             font.pixelSize: 6
-            verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
+            Layout.fillHeight: True
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignVCenter
         }
         Image {
             source: "qrc:/images/res/img/arrow_right.png"
@@ -76,7 +77,7 @@ MapQuickItem {
             fillMode: Image.PreserveAspectFit
             Layout.maximumHeight: parent.sizeArrow
             Layout.maximumWidth: parent.sizeArrow
-            Layout.alignment: Qt.AlignBaseline
+            Layout.alignment: Qt.AlignVCenter
         }
         transform: Rotation { origin.x: anchorPoint.x; origin.y: anchorPoint.y; angle: rotation  }
     }
