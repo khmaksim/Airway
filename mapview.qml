@@ -272,7 +272,7 @@ Item {
         if (component.status === Component.Ready) {
             var label = component.createObject(parent);
             label.coordinate = path[0];
-            label.textName = codePoint;
+            label.textName = codePoint + "\n" + Number(path[0].latitude).toFixed(2) + "\n" + Number(path[0].longitude).toFixed(2);
             label.angleRoute = getAngle(path[0], path[1]);
             mapParent.addMapItem(label);
         }

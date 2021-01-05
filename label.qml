@@ -34,9 +34,6 @@ MapQuickItem {
             anchorPoint.x = nameLabel.width
             anchorPoint.y = nameLabel.y
         }
-        // Set padding to point
-//        anchorPoint.x = anchorPoint.x + 3
-//        anchorPoint.y = anchorPoint.y + 3
     }
 
     onTextNameChanged: {
@@ -55,7 +52,6 @@ MapQuickItem {
         color: colorLabel
         text: textName
         font.pixelSize: 6
-//        horizontalAlignment: Text.AlignHCenter
         transform: Rotation { angle: rotation  }
     }
 }
