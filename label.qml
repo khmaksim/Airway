@@ -20,7 +20,6 @@ MapQuickItem {
     }
 
     onAngleRouteChanged: {
-//        console.log(angleRoute)
         if (angleRoute > 0 && angleRoute <= 90) {
             anchorPoint.x = nameLabel.width
             anchorPoint.y = nameLabel.height
@@ -36,11 +35,6 @@ MapQuickItem {
         }
     }
 
-    onTextNameChanged: {
-//        anchorPoint.x = fontMetrics.advanceWidth(textName) / 2;
-//        console.log(fontMetrics.advanceWidth(textName));
-    }
-
     FontMetrics {
         id: fontMetrics
         font.family: "Arial"
@@ -48,6 +42,7 @@ MapQuickItem {
 
     sourceItem: Text {
         id: nameLabel
+        padding: 3      // Set padding to PPM
 //        y: anchorPoint.y - fontMetrics.boundingRect(textName).height
         color: colorLabel
         text: textName

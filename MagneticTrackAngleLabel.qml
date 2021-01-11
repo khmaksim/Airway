@@ -49,7 +49,7 @@ MapQuickItem {
     }
 
     sourceItem: RowLayout {
-        spacing: 0
+        spacing: 2
         property double sizeArrow: labelMagneticTrackAngle.height / 3.5
 
         Image {
