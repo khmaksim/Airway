@@ -203,6 +203,7 @@ Item {
         var numPoints = points.length;
         var pathPoints = [];
         var codePoints = [];
+        var infoPoints = [];
         var polyline = null;
         var pathsDetails = [];
 
@@ -213,6 +214,7 @@ Item {
             var details = {};
             var coordinateXY = points[i]['coordinate'];
             var codePoint = points[i]['code'];
+            var infoPoint = points[i]['info'];
 
             // skip point and section too
             if (!codePoint) {
@@ -228,6 +230,7 @@ Item {
             var coordinate = QtPositioning.coordinate(coordinateXY.x, coordinateXY.y)
 
             codePoints.push(codePoint);
+            infoPoints.push(infoPoint);
             polyline.addCoordinate(coordinate);
             createPoint(coordinate, codeAirway, codePoint, mapParent);
             pathPoints.push(coordinate);
@@ -240,14 +243,16 @@ Item {
 
                 createMagneticTrackAngle(pathPoints, magneticTrackAngle, mapParent);
                 createDetailsPath(pathPoints, pathDetails, mapParent);
-                createLabel(pathPoints, codePoints[0], mapParent);
+                createLabel(pathPoints, codePoints[0], infoPoints[0], mapParent);
+
                 if ((i + 1) >= numPoints) {
                     pathPoints.push(pathPoints[0]);
                     pathPoints.shift();
-                    createLabel(pathPoints, codePoints[1], mapParent);
+                    createLabel(pathPoints, codePoints[1], infoPoints[1], mapParent);
                 }
                 pathsDetails.shift();
                 codePoints.shift();
+                infoPoints.shift();
                 pathPoints.shift();
                 mapParent.addMapItem(polyline);
             }
@@ -266,13 +271,13 @@ Item {
         }
     }
 
-    function createLabel(path, codePoint, mapParent) {
+    function createLabel(path, codePoint, infoPoint, mapParent) {
         var component = Qt.createComponent("qrc:/qml/label.qml");
 
         if (component.status === Component.Ready) {
             var label = component.createObject(parent);
             label.coordinate = path[0];
-            label.textName = codePoint + "\n" + Number(path[0].latitude).toFixed(2) + "\n" + Number(path[0].longitude).toFixed(2);
+            label.textName = codePoint + "\n" + infoPoint;
             label.angleRoute = getAngle(path[0], path[1]);
             mapParent.addMapItem(label);
         }

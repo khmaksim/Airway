@@ -67,8 +67,8 @@ MapQuickItem {
             text: magneticTrackAngle
             font.pixelSize: 6
             horizontalAlignment: Text.AlignLeft
-            Layout.fillHeight: True
-            Layout.fillWidth: true
+//            Layout.fillHeight: True
+//            Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
         }
         Image {
