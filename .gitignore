@@ -1,3 +1,5 @@
 *.pro.user
 *.pro.user*
+/source_data
+__pycache__
 
