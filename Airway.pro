@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql quick
+QT       += core gui sql quick network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -39,7 +39,8 @@ SOURCES += \
     model\pointsmodel.cpp \
     model\filterpointsmodel.cpp \
     settingsdialog.cpp \
-    qgroupheaderview.cpp
+    qgroupheaderview.cpp \
+    filedownloader.cpp
 
 HEADERS += \
     databaseaccess.h \
@@ -53,7 +54,8 @@ HEADERS += \
     model\filterpointsmodel.h \
     helper.h \
     settingsdialog.h \
-    qgroupheaderview.h
+    qgroupheaderview.h \
+    filedownloader.h
 
 FORMS += \
     settingsdialog.ui \

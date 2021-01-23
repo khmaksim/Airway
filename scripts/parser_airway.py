@@ -31,21 +31,20 @@ from os import path
 #     if text:
 #         return text
 
-def airway_insert(connect, code_ru, code_en, distance):
-	cursor = connect.cursor()
-	cursor.execute("INSERT OR IGNORE INTO airway VALUES(:code_ru, :code_en, :distance)", 
-        {"code_ru": code_ru, "code_en": code_en, "distance": distance})
-	# id = cursor.lastrowid
-	connect.commit()
-	return code_ru
+def airway_insert(connect, code_en, distance):
+    cursor = connect.cursor()
+    cursor.execute("INSERT OR IGNORE INTO airway(code_en, distance) VALUES(:code_en, :distance)", {"code_en": code_en, "distance": distance})
+    # id = cursor.lastrowid
+    connect.commit()
+    return code_en
 
 def point_insert(connect, point):
     cursor = connect.cursor()
-    cursor.execute("INSERT OR IGNORE INTO point(name_ru, name_en, lat, lon) VALUES(:name_ru, :name_en, :lat, :lon)", 
-		{"name_ru": point['name_ru'], "name_en": point['name_en'], "lat": point['lat'], "lon": point['lon']})
+    cursor.execute("INSERT OR IGNORE INTO point(name_en, lat, lon, report) VALUES(:name_en, :lat, :lon, :report)", 
+		{"name_en": point['name_en'], "lat": point['lat'], "lon": point['lon'], "report": point['report']})
     id = cursor.lastrowid
     connect.commit()
-    return point['name_ru']
+    return point['name_en']
 
 def airway_point_insert(connect, point):
     cursor = connect.cursor()
@@ -69,32 +68,33 @@ def airway_point_last_insert(connect, point):
 def parse_airway(conn, line):
     if not isinstance(line[0], str):
         return -1
-
-    airway_line = re.match( r'^\uf020(.*)\/(.*)\s(\d*\.\d*)\sкм', ' '.join(str(x) for x in line))
-
+    airway_line = re.match( r'^\W(\w+\s+\d*)\s(\d*\.\d*)\sкм', ' '.join(str(x) for x in line))
+    
     if airway_line:
-        name_ru = airway_line.group(1)
-        name_en = airway_line.group(2)
-        distance = float(airway_line.group(3))
-        # airway_distance = float(line[1].split(' ')[0])
-        print(name_ru, name_en, distance)
-        id_airway = airway_insert(conn, name_ru, name_en, distance)
+        name_en = airway_line.group(1)
+        distance = float(airway_line.group(2))
+        airway_distance = float(line[1].split(' ')[0])
+        # print(name_en, distance)
+        id_airway = airway_insert(conn, name_en, distance)
         return id_airway
 
     return -1
 
 def parse_airway_point(conn, line):
-    if not isinstance(line[0], str):
-        return -1
-
-    point_airway_line = re.match( r'^[\uf072|\uf070]\uf020(.*)\/(.*)\s(\d*[NS])\s(\d*[EW])', ' '.join(str(x) for x in line))
+    # if not isinstance(line[0], str):
+    #     return -1
+    point_airway_line = re.match( r'^([\uf072|\uf070])\uf020(.*)\s(\d*[NS])\s(\d*[EW])', ' '.join(str(x) for x in line))
+    
     point = {}
     if point_airway_line:
-        point['name_ru'] = point_airway_line.group(1)
+        if point_airway_line.group(1) == '\uf072':
+            point['report'] = 0
+        else:
+            point['report'] = 1
         point['name_en'] = point_airway_line.group(2)
         point['lat'] = point_airway_line.group(3)
         point['lon'] = point_airway_line.group(4)
-        print(point)
+        # print(point)
         id_point = point_insert(conn, point)
         return id_point
 
@@ -146,8 +146,8 @@ if __name__ == '__main__':
 
         if path.exists(file):
             print('Read data...')
-            # df = tabula.read_pdf(file, pages="all", stream=True)
-            df = tabula.read_pdf(file, pages='12-271', stream=True)
+            #df = tabula.read_pdf(file, pages="all", stream=True)
+            df = tabula.read_pdf(file, pages='1-1', stream=True)
             # df = tabula.read_pdf(file, pages='12-13', stream=True)
             order = 0
 
@@ -162,53 +162,49 @@ if __name__ == '__main__':
                 order = 0
                 code_airway = 0
                 code_point = 0
+                next_line_details = False
+
+                # Read data from header about airway
+                line = df[p].columns
+              
+                code = parse_airway(conn, line)
+                if code_airway != -1:
+                    code_airway = code
+                    order = 0
 
                 while i < len(df[p]):
                     print('{0}/{1}'.format(p, i))                    
 
-                    # Read data from header
-                    line = df[p].columns
-                    
-                    if not read_columns:
-                        code = parse_airway(conn, line)
-                        read_columns = True
-                        if code_airway != -1:
-                            code_airway = code
-                            order = 0
-
                     line = df[p].values[i]
                     i = i + 1
-
+                    print(line)
                     line = check_nan(line)
                     
-                    if len(line) == 0:
-                        continue
-
-                    code = parse_airway(conn, line)
-                    if code != -1:
-                        code_airway = code
-                        order = 0
-                        continue
+                    # if len(line) == 0:
+                    #     continue
 
                     code = parse_airway_point(conn, line)
-                    if code != -1:
+                    if code != -1 and code_point != code:
                         code_point = code
                         lines = []
                         continue
 
-                    if not isinstance(line[0], str):
-                        continue
+                    # if not isinstance(line[0], str):
+                    #     continue
 
-                    point_detail_begin_line = re.match( r'^\uf020', line[0])
+                    point_detail_begin_line = re.match(r'(\uf020)', ' '.join(str(x) for x in line))
 
-                    if point_detail_begin_line:
+                    if point_detail_begin_line or next_line_details:
                         lines.append(line)
+                        next_line_details = True
 
                     if len(lines) == 2:
-                        if parse_airway_point_detail(conn, lines, code_airway, code_point, order):
-                            order = order + 1
-                            code_point = 0
-                        lines = []
+                        print(lines)
+                        next_line_details = False
+                        # if parse_airway_point_detail(conn, lines, code_airway, code_point, order):
+                        #     order = order + 1
+                        #     code_point = 0
+                        # lines = []
 
                 if code_point != 0:
                     point = {}

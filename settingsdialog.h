@@ -22,6 +22,9 @@ class SettingsDialog : public QDialog
     private slots:
         void selectFileDatabase();
         void writeSettings();
+        void addNewSourceDataToList();
+        void removeSourceDataFromList();
+        void enableRemoveButton();
 };
 
 #endif // SETTINGSDIALOG_H
