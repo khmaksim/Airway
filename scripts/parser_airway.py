@@ -101,27 +101,34 @@ def parse_airway_point(conn, line):
     return -1
 
 def parse_airway_point_detail(conn, lines, id_airway, id_point, order):
-    attr_airway = re.search(r'\s(\d*\.?\d*)\D\s(\d*\.?\d*)\s(\w+\d*)\s(\d*\.?\d*)\s(\d*\.?\d*)\s?(\S*)?\s?(\S*)?', ' '.join(str(x) for x in lines[0]))
-    attr_airway2 = re.search(r'\s(\d*\.?\d*)\D\s(\w+\d*)', ' '.join(str(x) for x in lines[1]))
     point = {}
-    if attr_airway and attr_airway2:
+    attr_airway = re.search(r'\uf020\s*(\d+)\S+\s*(\d+\.?\d?)\s(\d*)/(\d*)\s(\d*\.?\d*)\s\d*\.?\d*\s\d*\.?\d*\s\d*\.?\d*\s[\S\s]*', ' '.join(str(x) for x in lines[0]))
+
+    if attr_airway:
         point['code_airway'] = id_airway
         point['code_point'] = id_point
+
         point['magnetic_track_angle_forward'] = attr_airway.group(1)
         point['distance'] = attr_airway.group(2)
         point['upper_limit'] = attr_airway.group(3)
-        point['minimum_altitude'] = attr_airway.group(4)
         point['width'] = attr_airway.group(5)
-        point['direction_trains_forward'] = attr_airway.group(6)
-        point['direction_trains_back'] = attr_airway.group(7)
-        point['magnetic_track_angle_back']  = attr_airway2.group(1) 
-        point['lower_limit'] = attr_airway2.group(2)
+        
+        point['altitude'] = attr_airway.group(6)
+        
+        # point['direction_trains_forward'] = attr_airway.group(6)
+        # point['direction_trains_back'] = attr_airway.group(7)
+    
+    attr_airway = re.match(r'FREQ:\s*[\S\s]*\s*\uf020\s*(\d+)\S+\s*(\d+)/(\d+)', ' '.join(str(x) for x in lines[1]))
+    if attr_airway:
+        point['magnetic_track_angle_back']  = attr_airway.group(1) 
+        point['minimum_altitude'] = attr_airway.group(4)
+        # point['direction_trains_forward'] = attr_airway.group(6)
+        # point['direction_trains_back'] = attr_airway.group(7)
+        point['lower_limit'] = attr_airway.group(2)
         point['order'] = order
-        print(point)
-        airway_point_insert(conn, point)
-        return True
-
-    return False
+    
+    airway_point_insert(conn, point)
+    return True
 
 def check_nan(line):
     new_line = []
@@ -180,31 +187,26 @@ if __name__ == '__main__':
                     print(line)
                     line = check_nan(line)
                     
-                    # if len(line) == 0:
-                    #     continue
-
                     code = parse_airway_point(conn, line)
                     if code != -1 and code_point != code:
                         code_point = code
                         lines = []
                         continue
 
-                    # if not isinstance(line[0], str):
-                    #     continue
-
-                    point_detail_begin_line = re.match(r'(\uf020)', ' '.join(str(x) for x in line))
-
-                    if point_detail_begin_line or next_line_details:
+                    
+                    point_detail_line = re.match(r'(\uf020\s*\d+\S+\s*\d+\.?\d?\s\d*/\d*\s\d*\.?\d*\s\d*\.?\d*\s\d*\.?\d*\s\d*\.?\d*\s[\S\s]*)', ' '.join(str(x) for x in line))
+                    if point_detail_line:
                         lines.append(line)
-                        next_line_details = True
+
+                    point_detail_line = re.match(r'(FREQ:\s*[\S\s]*\s*\uf020\s*\d+\S+\s*\d+/\d+)', ' '.join(str(x) for x in line))
+                    if point_detail_line:
+                        lines.append(line)
 
                     if len(lines) == 2:
-                        print(lines)
-                        next_line_details = False
-                        # if parse_airway_point_detail(conn, lines, code_airway, code_point, order):
-                        #     order = order + 1
-                        #     code_point = 0
-                        # lines = []
+                        if parse_airway_point_detail(conn, lines, code_airway, code_point, order):
+                            order = order + 1
+                            code_point = 0
+                        lines = []
 
                 if code_point != 0:
                     point = {}

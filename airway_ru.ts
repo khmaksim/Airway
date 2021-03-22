@@ -172,16 +172,22 @@
     </message>
     <message>
         <location filename="mainwindow.cpp" line="67"/>
+        <source>Update</source>
+        <oldsource>Forced update</oldsource>
+        <translation>Обновление</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="72"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="279"/>
+        <location filename="mainwindow.cpp" line="285"/>
         <source>Export to file</source>
         <translation>Экспорт в файл</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="279"/>
+        <location filename="mainwindow.cpp" line="285"/>
         <source>Data export completed successfully.</source>
         <translation>Экспорт данных выполнен успешно.</translation>
     </message>
@@ -190,14 +196,14 @@
         <translation type="vanished">Поиск...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="243"/>
+        <location filename="mainwindow.cpp" line="249"/>
         <source>Save file</source>
         <translation>Сохранить файл</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="14"/>
         <location filename="mainwindow.ui" line="44"/>
-        <location filename="mainwindow.cpp" line="181"/>
+        <location filename="mainwindow.cpp" line="187"/>
         <source>Airways</source>
         <oldsource>Airway</oldsource>
         <translation>Воздушные трассы</translation>
@@ -583,7 +589,7 @@
         <translation>Все базы данных SQLite (*.db *.sdb. *sqlite *.db3 *.s3db *sqlite3 *.sl3 *.db2 *.s2db *.sqlite2 *.sl2)</translation>
     </message>
     <message>
-        <location filename="settingsdialog.cpp" line="82"/>
+        <location filename="settingsdialog.cpp" line="88"/>
         <source>Enter URL source data...</source>
         <translation>Введите  URL-адрес исходных данные...</translation>
     </message>

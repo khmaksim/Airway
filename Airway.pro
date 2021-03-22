@@ -13,6 +13,9 @@ TEMPLATE = app
 SUBDIRS = delegate \
             model
 
+QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -D_hypot=hypot
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -60,6 +63,10 @@ HEADERS += \
 FORMS += \
     settingsdialog.ui \
     mainwindow.ui
+
+INCLUDEPATH += C:\Python36-32\include
+
+LIBS += C:\Python36-32\libs\python36.lib
 
 RESOURCES += airway.qrc
 

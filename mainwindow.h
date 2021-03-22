@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMap>
 
 namespace Ui {
     class MainWindow;
@@ -10,6 +11,7 @@ namespace Ui {
 class Database;
 class QStandardItemModel;
 class QToolButton;
+class QProgressDialog;
 class MapView;
 class PointsModel;
 class MainWindow : public QMainWindow
@@ -22,9 +24,11 @@ class MainWindow : public QMainWindow
 
     private:
         Ui::MainWindow *ui;
+        QProgressDialog *m_progressDialog;
         QToolBar *toolBar;
         QToolButton *exportButton;
         QToolButton *displayOnMapButton;
+        QToolButton *updateButton;
         QToolButton *settingsButton;
         MapView *mapView;
 
@@ -35,17 +39,24 @@ class MainWindow : public QMainWindow
         void updateModels();
         void readSettings();
         void writeSettings();
+        void startParser(const QString &fileName);
 
     private slots:
         void enabledToolButton();
+        void enabledUpdateButton();
         void showAirways();
         void showSettings();
         void exportToFile();
         void filterPoints(const QModelIndex&);
         void setCheckedAllRowTable(bool checked = false);
         void setChecked(bool checked, QString codeAirway, QString codePoint);
+        void downloadSourceData();
+        void saveSourceDataFile();
+        void showProgressDownloadFile(qint64 bytesReceived, qint64 bytesTotal);
 
     private:
+        QMap<QObject*, qint64> bytesTotalFiles;
+        QMap<QObject*, qint64> bytesReceivedFiles;
         QStringList m_codeAirwayFilter;
 };
 
