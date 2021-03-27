@@ -17,14 +17,14 @@ class SettingsDialog : public QDialog
 
     private:
         Ui::SettingsDialog *ui;
+        QWidget *m_parent;
         void readSettings();
 
     private slots:
-        void selectFileDatabase();
         void writeSettings();
-        void addNewSourceDataToList();
-        void removeSourceDataFromList();
-        void enableRemoveButton();
+        void showHidePassword(int);
+        void showStatusConnect(const QString &error = QString());
+        void onTestConnected();
 };
 
 #endif // SETTINGSDIALOG_H

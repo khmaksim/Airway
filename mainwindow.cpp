@@ -1,4 +1,3 @@
-#include <Python.h>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "databaseaccess.h"
@@ -15,6 +14,7 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QProgressDialog>
+#include <QScreen>
 #include "mapview.h"
 #include "helper.h"
 #include "settingsdialog.h"
@@ -23,7 +23,6 @@
 #include "delegate/pointitemdelegate.h"
 #include "delegate/checkboxitemdelegate.h"
 #include "qgroupheaderview.h"
-#include "filedownloader.h"
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -42,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     FilterPointsModel *filterPointsModel = new FilterPointsModel(this);
     filterPointsModel->setSourceModel(m_pointsModel);
     filterPointsModel->setFilterKeyColumn(1);
+
     QGroupHeaderView *groupHeaderView = new QGroupHeaderView(Qt::Horizontal, ui->pointsTableView);
     groupHeaderView->setCheckable(true);
     ui->pointsTableView->setHorizontalHeader(groupHeaderView);
@@ -67,11 +67,6 @@ MainWindow::MainWindow(QWidget *parent) :
     displayOnMapButton->setIconSize(QSize(32, 32));
     displayOnMapButton->setIcon(QIcon(":/images/res/img/icons8-map-marker-48.png"));
     displayOnMapButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    updateButton = new QToolButton(this);
-    updateButton->setText(tr("Update"));
-    updateButton->setIconSize(QSize(32, 32));
-    updateButton->setIcon(QIcon(":/images/res/img/icons8-downloading-updates-48.png"));
-    updateButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     settingsButton = new QToolButton(this);
     settingsButton->setText(tr("Settings"));
     settingsButton->setIconSize(QSize(32, 32));
@@ -80,11 +75,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     toolBar->addWidget(exportButton);
     toolBar->addWidget(displayOnMapButton);
-    toolBar->addWidget(updateButton);
     toolBar->addWidget(settingsButton);
 
     readSettings();
-    updateModels();
 
     connect(ui->airwayListView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(filterPoints(const QModelIndex&)));
     connect(ui->searchLineEdit, SIGNAL(textChanged(const QString&)), searchAirfieldsModel, SLOT(setFilterRegExp(QString)));
@@ -92,8 +85,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(exportButton, SIGNAL(clicked(bool)), this, SLOT(exportToFile()));
     connect(displayOnMapButton, SIGNAL(clicked(bool)), this, SLOT(showAirways()));
     connect(settingsButton, SIGNAL(clicked(bool)), this, SLOT(showSettings()));
-    connect(updateButton, SIGNAL(clicked(bool)), SLOT(downloadSourceData()));
     connect(groupHeaderView, SIGNAL(clickedCheckBox(bool)), this, SLOT(setCheckedAllRowTable(bool)));
+    connect(DatabaseAccess::getInstance(), SIGNAL(notificationConnected(const QString&)), this, SLOT(showMessageErrorConnectDatabase(const QString&)));
+
+    if (!DatabaseAccess::getInstance()->connect())
+        showSettings();
+    else
+        updateModels();
 }
 
 MainWindow::~MainWindow()
@@ -146,6 +144,9 @@ void MainWindow::writeSettings()
     settings.setValue("centralSplitter", ui->splitter->saveState());
     settings.setValue("maximized", this->isMaximized());
     settings.setValue(ui->pointsTableView->objectName(), ui->pointsTableView->horizontalHeader()->saveState());
+    settings.beginGroup("MainWindow");
+    settings.setValue("geometry", this->geometry());
+    settings.endGroup();
     settings.endGroup();
 }
 
@@ -154,17 +155,36 @@ void MainWindow::readSettings()
     QSettings settings;
 
     settings.beginGroup("geometry");
+    settings.beginGroup("MainWindow");
+    if (settings.contains("geometry"))
+        this->setGeometry(settings.value("geometry").toRect());
+    else {
+        // default size
+        QRect rect = frameGeometry();
+        rect.moveCenter(QGuiApplication::screens().at(0)->geometry().center());
+        this->setGeometry(rect.topLeft().x(), rect.topLeft().y(), 700, 500);
+    }
+
     if (settings.contains("centralSplitter"))
         ui->splitter->restoreState(settings.value("centralSplitter").toByteArray());
     else {
         int widthMainwindow = this->size().width();
         ui->splitter->setSizes(QList<int>() << widthMainwindow / 4 << (widthMainwindow / 4) * 3);
     }
+
     if (settings.value("maximized").toBool())
         this->showMaximized();
+
     ui->pointsTableView->horizontalHeader()->restoreState(settings.value(ui->pointsTableView->objectName()).toByteArray());
     settings.endGroup();
+    settings.endGroup();
     settings.beginGroup("connectDatabase");
+    QString host = settings.value("host", "localhost").toString();
+    int port = settings.value("port", "5432").toInt();
+    QString nameDatabase = settings.value("nameDatabase").toString();
+    QString user = settings.value("user", "postgres").toString();
+    QString password = settings.value("password").toString();
+    DatabaseAccess::getInstance()->initConnectDatabase(host, port, nameDatabase, user, password);
     settings.endGroup();
 }
 
@@ -330,79 +350,7 @@ void MainWindow::setChecked(bool checked, QString codeAirway, QString codePoint)
         }
 }
 
-void MainWindow::downloadSourceData()
+void MainWindow::showMessageErrorConnectDatabase(const QString &message)
 {
-    updateButton->setDisabled(true);
-
-    QSettings settings;
-    m_progressDialog = new QProgressDialog(this);
-    m_progressDialog->setWindowModality(Qt::WindowModal);
-    m_progressDialog->setCancelButtonText(tr("Cancel"));
-    m_progressDialog->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint | Qt::MSWindowsFixedSizeDialogHint);
-    m_progressDialog->setLabelText(tr("Uploading files..."));
-
-    int rows = settings.beginReadArray("sourcesData");
-    for (int row = 0; row < rows; ++row) {
-        settings.setArrayIndex(row);
-        QUrl urlSourceData(settings.value("url").toString());
-        if (urlSourceData.isValid()) {
-            FileDownloader *downloader = new FileDownloader(urlSourceData, this);
-            connect(downloader, SIGNAL(downloaded()), SLOT(saveSourceDataFile()));
-            connect(downloader, &FileDownloader::updateDownloadProgress, this, &MainWindow::showProgressDownloadFile);
-            connect(m_progressDialog, SIGNAL(canceled()), downloader, SLOT(cancelDownload()));
-            connect(m_progressDialog, SIGNAL(canceled()), this, SLOT(enabledUpdateButton()));
-//            m_progressDialog->setLabelText(tr("Uploading file:%1").arg(urlSourceData.fileName()));
-        }
-        break;
-    }
-    settings.endArray();
-}
-
-void MainWindow::saveSourceDataFile()
-{
-    auto downloader = qobject_cast<FileDownloader*>(sender());
-
-    if (!QDir::current().mkpath("uploaded"))
-        return;
-    QFile fileSourceData(QDir::currentPath().append("\\").append("uploaded").append("\\").append(downloader->downloadedFileName()));
-
-    if (fileSourceData.open(QIODevice::WriteOnly)) {
-        fileSourceData.write(downloader->downloadedData());
-        fileSourceData.close();
-    }
-}
-
-void MainWindow::startParser(const QString &fileName)
-{
-    QString pyCallFuncStr = QString("parser_airway.parser('%1')").arg(fileName);
-
-    Py_InitializeEx(0);
-    PyRun_SimpleString("import sys");
-    PyRun_SimpleString("sys.path.append('./scripts')");
-    PyRun_SimpleString("import parser_airway");
-    PyRun_SimpleString(pyCallFuncStr.toLocal8Bit().data());
-    Py_Finalize();
-}
-
-void MainWindow::showProgressDownloadFile(qint64 bytesReceived, qint64 bytesTotal)
-{
-    if (m_progressDialog) {
-        bytesTotalFiles[sender()] = bytesTotal;
-        bytesReceivedFiles[sender()] = bytesReceived;
-        qint64 bytesTotalAll = 0;
-        qint64 bytesReceivedAll = 0;
-
-        for (auto total : bytesTotalFiles.values())
-            bytesTotalAll += total;
-
-        for (auto received : bytesReceivedFiles.values())
-            bytesReceivedAll += received;
-
-        m_progressDialog->setValue((bytesReceivedAll * 100) / bytesTotalAll);
-    }
-}
-
-void MainWindow::enabledUpdateButton()
-{
-
+    QMessageBox::warning(this, tr("Connecting to this database"), message);
 }

@@ -1,16 +1,12 @@
 #include "databaseaccess.h"
 #include <QSqlDatabase>
-#include <QFile>
-#include <QDebug>
 #include <QSqlQuery>
 #include <QSqlError>
-#include <QDebug>
 #include <QVariant>
 #include <QSqlRecord>
 #include <QDateTime>
 #include <QApplication>
-#include <QSettings>
-#include <QMessageBox>
+#include <QDebug>
 
 DatabaseAccess::DatabaseAccess(QObject *parent) : QObject(parent)
 {
@@ -19,7 +15,7 @@ DatabaseAccess::DatabaseAccess(QObject *parent) : QObject(parent)
 DatabaseAccess* DatabaseAccess::getInstance()
 {
     static DatabaseAccess instance;
-    instance.connect();
+//    instance.connect();               // SQLite
     return &instance;
 }
 
@@ -30,36 +26,49 @@ DatabaseAccess* DatabaseAccess::getInstance()
 //    return databaseAccess;
 //}
 
-void DatabaseAccess::readSettings()
-{
-    QSettings settings;
 
-    settings.beginGroup("database");
-    fileNameDatabase = settings.value("file").toString();
-    settings.endGroup();
+void DatabaseAccess::initConnectDatabase(const QString &host, int port, const QString &nameDatabase, const QString &user, const QString &password)
+{
+    this->host = host;
+    this->port = port;
+    this->nameDatabase = nameDatabase;
+    this->user = user;
+    this->password = password;
 }
 
-void DatabaseAccess::connect()
+bool DatabaseAccess::connect(const QVariant &configConectDatabase)
 {
-    readSettings();
+    QMap<QString, QVariant> config = configConectDatabase.toMap();
 
-    db = QSqlDatabase::addDatabase("QSQLITE", "airway");
-    if (!QFile(fileNameDatabase).exists()) {
-        qDebug() << "File database is not found!";
-    }
-
-    db.setDatabaseName(fileNameDatabase);
-    if (db.open()) {
-        QMessageLogger(nullptr, 0, nullptr).info("Connect database");
-        QMessageLogger(nullptr, 0, nullptr).debug() << "file database" << fileNameDatabase;
-    }
+    if (config.isEmpty())
+        db = QSqlDatabase::addDatabase("QPSQL");
     else {
-        QMessageLogger(nullptr, 0, nullptr).warning("Failed to connect to the database");
-        QMessageLogger(nullptr, 0, nullptr).debug() << db.lastError().text();
-        qDebug() << db.lastError().text();
+        db = QSqlDatabase::addDatabase("QPSQL", QString("test"));
+        host = config.value("host").toString();
+        port = config.value("port").toInt();
+        nameDatabase = config.value("nameDatabase").toString();
+        user = config.value("user").toString();
+        password = config.value("password").toString();
     }
 
-    db.exec("PRAGMA FOREIGN_KEYS=ON");       //set support for foreign keys
+    db.setHostName(host);
+    db.setPort(port);
+    db.setDatabaseName(nameDatabase);
+    db.setUserName(user);
+    db.setPassword(password);
+
+    if (!db.open()) {
+        if (!host.isEmpty() && !nameDatabase.isEmpty() && !user.isEmpty() && !password.isEmpty())
+            emit notificationConnected(db.lastError().text());
+        return false;
+    }
+    emit connected();
+
+    // remove test connect to database
+    if (db.connectionName().contains("test"))
+        QSqlDatabase::removeDatabase(QString("test"));
+
+    return true;
 }
 
 QVector<Record> DatabaseAccess::getAirways()
@@ -109,4 +118,9 @@ QVector<Record> DatabaseAccess::getPoints()
     }
 
     return points;
+}
+
+bool DatabaseAccess::isConnected() const
+{
+    return QSqlDatabase::database().isOpen();
 }

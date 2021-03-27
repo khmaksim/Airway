@@ -42,8 +42,7 @@ SOURCES += \
     model\pointsmodel.cpp \
     model\filterpointsmodel.cpp \
     settingsdialog.cpp \
-    qgroupheaderview.cpp \
-    filedownloader.cpp
+    qgroupheaderview.cpp
 
 HEADERS += \
     databaseaccess.h \
@@ -57,16 +56,11 @@ HEADERS += \
     model\filterpointsmodel.h \
     helper.h \
     settingsdialog.h \
-    qgroupheaderview.h \
-    filedownloader.h
+    qgroupheaderview.h
 
 FORMS += \
     settingsdialog.ui \
     mainwindow.ui
-
-INCLUDEPATH += C:\Python36-32\include
-
-LIBS += C:\Python36-32\libs\python36.lib
 
 RESOURCES += airway.qrc
 

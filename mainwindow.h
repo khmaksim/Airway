@@ -34,7 +34,6 @@ class MainWindow : public QMainWindow
 
         QStandardItemModel *m_airwaysModel;
         PointsModel *m_pointsModel;
-        Database *db;
 
         void updateModels();
         void readSettings();
@@ -43,16 +42,13 @@ class MainWindow : public QMainWindow
 
     private slots:
         void enabledToolButton();
-        void enabledUpdateButton();
         void showAirways();
         void showSettings();
         void exportToFile();
         void filterPoints(const QModelIndex&);
         void setCheckedAllRowTable(bool checked = false);
         void setChecked(bool checked, QString codeAirway, QString codePoint);
-        void downloadSourceData();
-        void saveSourceDataFile();
-        void showProgressDownloadFile(qint64 bytesReceived, qint64 bytesTotal);
+        void showMessageErrorConnectDatabase(const QString &message);
 
     private:
         QMap<QObject*, qint64> bytesTotalFiles;
