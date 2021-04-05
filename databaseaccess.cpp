@@ -76,7 +76,7 @@ QVector<Record> DatabaseAccess::getAirways()
     QSqlQuery query(db);
     QVector<Record> airways = QVector<Record>();
 
-    query.exec("SELECT code_ru FROM airway ORDER BY code_ru");
+    query.exec("SELECT txt_desig FROM public.en_route_rte ORDER BY txt_desig");
     while (query.next()) {
         Record record;
         QSqlRecord sqlRecord = query.record();
@@ -96,12 +96,12 @@ QVector<Record> DatabaseAccess::getPoints()
     QSqlQuery query(db);
     QVector<Record> points = QVector<Record>();
 
-    query.exec("SELECT ap.code_airway, p.name_ru, p.lat, p.lon, ap.magnetic_track_angle_forward, "
-               "ap.magnetic_track_angle_back, ap.minimum_altitude, ap.width, "
-               "ap.direction_trains_forward, ap.direction_trains_back, ap.upper_limit, ap.lower_limit, "
-               "p.name_ru "
-               "FROM airway_point ap, point p "
-               "WHERE p.name_ru = ap.code_point ORDER BY ap.code_airway, ap.\"order\"");
+    query.exec("SELECT rr.txt_desig, sp.txt_name, sp.geo_lat, sp.geo_long, rs.val_mag_track, "
+               "rs.val_revers_mag_track, rs.val_len, rs.val_dist_ver_upper, rs.val_dist_ver_lower, "
+               "rs.val_dist_ver_mnm, rs.val_wid "
+               "FROM public.rte_seg rs, public.en_route_rte rr, public.significant_point sp "
+               "WHERE rr.id = rs.route AND sp.id = rs.point "
+               "ORDER BY rr.txt_desig, rs.seqnr");
 
     if (query.lastError().isValid())
         qDebug() << query.lastError().text() << query.lastQuery();

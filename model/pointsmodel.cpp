@@ -125,7 +125,7 @@ double PointsModel::getDistance(const QModelIndex &index) const
     if (!index.isValid())
         return {};
 
-    return 0;
+    return m_points.at(index.row()).toList().at(6).toDouble();
 }
 
 double PointsModel::getMinimumAltitude(const QModelIndex &index) const
@@ -133,7 +133,7 @@ double PointsModel::getMinimumAltitude(const QModelIndex &index) const
     if (!index.isValid())
         return {};
 
-    return m_points.at(index.row()).toList().at(6).toDouble();
+    return m_points.at(index.row()).toList().at(9).toDouble();
 }
 
 double PointsModel::getWidth(const QModelIndex &index) const
@@ -141,7 +141,7 @@ double PointsModel::getWidth(const QModelIndex &index) const
     if (!index.isValid())
         return {};
 
-    return m_points.at(index.row()).toList().at(7).toDouble();
+    return m_points.at(index.row()).toList().at(10).toDouble();
 }
 
 QStringList PointsModel::getDirectionTrains(const QModelIndex &index) const
@@ -162,10 +162,10 @@ QStringList PointsModel::getLimit(const QModelIndex &index) const
     if (!index.isValid())
         return {};
 
-    if (m_points.at(index.row()).toList().at(10).toString().isEmpty() &&
-            m_points.at(index.row()).toList().at(11).toString().isEmpty())
+    if (m_points.at(index.row()).toList().at(7).toString().isEmpty() &&
+            m_points.at(index.row()).toList().at(8).toString().isEmpty())
         return {};
 
-    return QStringList() << m_points.at(index.row()).toList().at(10).toString()
-                         << m_points.at(index.row()).toList().at(11).toString();
+    return QStringList() << m_points.at(index.row()).toList().at(7).toString()
+                         << m_points.at(index.row()).toList().at(8).toString();
 }
