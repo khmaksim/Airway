@@ -301,20 +301,24 @@ Item {
 
         if (component.status === Component.Ready) {
             if (magneticTrackAngle.length > 0) {
-                var labelForward = component.createObject(parent);
-                labelForward.direction = "forward";
-                labelForward.coordinate = points[0]
-                labelForward.magneticTrackAngle = magneticTrackAngle[0];
-                labelForward.setRotation(getAngle(points[0], points[1]));
-                mapParent.addMapItem(labelForward);
+                if (magneticTrackAngle[0] !== '-') {
+                    var labelForward = component.createObject(parent);
+                    labelForward.direction = "forward";
+                    labelForward.coordinate = points[0]
+                    labelForward.magneticTrackAngle = magneticTrackAngle[0];
+                    labelForward.setRotation(getAngle(points[0], points[1]));
+                    mapParent.addMapItem(labelForward);
+                }
             }
             if (magneticTrackAngle.length > 1) {
-                var labelBack = component.createObject(parent);
-                labelBack.direction = "back";
-                labelBack.coordinate = points[1]
-                labelBack.magneticTrackAngle = magneticTrackAngle[1];
-                labelBack.setRotation(getAngle(points[1], points[0]));
-                mapParent.addMapItem(labelBack);
+                if (magneticTrackAngle[1] !== '-') {
+                    var labelBack = component.createObject(parent);
+                    labelBack.direction = "back";
+                    labelBack.coordinate = points[1]
+                    labelBack.magneticTrackAngle = magneticTrackAngle[1];
+                    labelBack.setRotation(getAngle(points[1], points[0]));
+                    mapParent.addMapItem(labelBack);
+                }
             }
         }
     }

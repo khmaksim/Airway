@@ -112,12 +112,21 @@ QStringList PointsModel::getMagneticTrackAngle(const QModelIndex &index) const
     if (!index.isValid())
         return {};
 
-    if (m_points.at(index.row()).toList().at(4).toString().isEmpty() &&
-            m_points.at(index.row()).toList().at(5).toString().isEmpty())
-        return QStringList() << "0" << "0";
+    QStringList mpu;
 
-    return QStringList() << m_points.at(index.row()).toList().at(4).toString() + QChar(176)
-                         << m_points.at(index.row()).toList().at(5).toString() + QChar(176);
+    if (m_points.at(index.row()).toList().at(4).toString().isEmpty() ||
+            m_points.at(index.row()).toList().at(4).toInt() == 0)
+        mpu << "-";
+    else
+        mpu << m_points.at(index.row()).toList().at(4).toString() + QChar(176);
+
+    if (m_points.at(index.row()).toList().at(5).toString().isEmpty() ||
+            m_points.at(index.row()).toList().at(5).toInt() == 0)
+        mpu << "-";
+    else
+        mpu << m_points.at(index.row()).toList().at(5).toString() + QChar(176);
+
+    return mpu;
 }
 
 double PointsModel::getDistance(const QModelIndex &index) const
