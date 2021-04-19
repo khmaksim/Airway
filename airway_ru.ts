@@ -161,49 +161,53 @@
         <translation type="vanished">Наименование сектора</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="56"/>
+        <location filename="mainwindow.cpp" line="60"/>
         <source>Export</source>
         <translation>Экспорт</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="62"/>
+        <location filename="mainwindow.cpp" line="66"/>
         <source>Unhide</source>
         <translation>Отобразить</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="67"/>
         <source>Update</source>
         <oldsource>Forced update</oldsource>
-        <translation>Обновление</translation>
+        <translation type="vanished">Обновление</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="72"/>
+        <location filename="mainwindow.cpp" line="71"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="285"/>
+        <location filename="mainwindow.cpp" line="310"/>
         <source>Export to file</source>
         <translation>Экспорт в файл</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="285"/>
+        <location filename="mainwindow.cpp" line="310"/>
         <source>Data export completed successfully.</source>
         <translation>Экспорт данных выполнен успешно.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="355"/>
+        <source>Connecting to this database</source>
+        <translation>Подключение к базе данных</translation>
     </message>
     <message>
         <source>Search...</source>
         <translation type="vanished">Поиск...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="249"/>
+        <location filename="mainwindow.cpp" line="274"/>
         <source>Save file</source>
         <translation>Сохранить файл</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="14"/>
         <location filename="mainwindow.ui" line="44"/>
-        <location filename="mainwindow.cpp" line="187"/>
+        <location filename="mainwindow.cpp" line="212"/>
         <source>Airways</source>
         <oldsource>Airway</oldsource>
         <translation>Воздушные трассы</translation>
@@ -544,54 +548,93 @@
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="settingsdialog.ui" line="119"/>
         <source>File database:</source>
-        <translation>Файл базы данных:</translation>
+        <translation type="vanished">Файл базы данных:</translation>
     </message>
     <message>
-        <location filename="settingsdialog.ui" line="112"/>
         <source>...</source>
-        <translation>...</translation>
+        <translation type="vanished">...</translation>
+    </message>
+    <message>
+        <source>Source data URLs</source>
+        <translation type="vanished">URL-адреса исходных данных</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="vanished">Добавить</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="vanished">Удалить</translation>
     </message>
     <message>
         <location filename="settingsdialog.ui" line="23"/>
-        <source>Source data URLs</source>
-        <translation>URL-адреса исходных данных</translation>
+        <source>Connecting to the database</source>
+        <oldsource>Connectiong to the database</oldsource>
+        <translation>Подключение к базе данных</translation>
     </message>
     <message>
         <location filename="settingsdialog.ui" line="38"/>
-        <source>Add</source>
-        <translation>Добавить</translation>
+        <source>Name database:</source>
+        <translation>Название базы данных:</translation>
     </message>
     <message>
-        <location filename="settingsdialog.ui" line="48"/>
-        <source>Remove</source>
-        <translation>Удалить</translation>
+        <location filename="settingsdialog.ui" line="57"/>
+        <source>Host:</source>
+        <translation>Хост:</translation>
     </message>
     <message>
-        <location filename="settingsdialog.ui" line="89"/>
+        <location filename="settingsdialog.ui" line="76"/>
+        <source>Port:</source>
+        <translation>Порт:</translation>
+    </message>
+    <message>
+        <location filename="settingsdialog.ui" line="95"/>
+        <source>User:</source>
+        <translation>Пользователь:</translation>
+    </message>
+    <message>
+        <location filename="settingsdialog.ui" line="114"/>
+        <source>Password:</source>
+        <translation>Пароль:</translation>
+    </message>
+    <message>
+        <location filename="settingsdialog.ui" line="131"/>
+        <source>show</source>
+        <translation>отобразить</translation>
+    </message>
+    <message>
+        <location filename="settingsdialog.ui" line="156"/>
+        <source>Test connection...</source>
+        <oldsource>Test connected...</oldsource>
+        <translation>Тест подключения...</translation>
+    </message>
+    <message>
+        <location filename="settingsdialog.ui" line="212"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="settingsdialog.ui" line="96"/>
+        <location filename="settingsdialog.ui" line="219"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="settingsdialog.cpp" line="38"/>
         <source>Select file database</source>
-        <translation>Выбрать файл базы данных</translation>
+        <translation type="vanished">Выбрать файл базы данных</translation>
     </message>
     <message>
-        <location filename="settingsdialog.cpp" line="39"/>
         <source>All database SQLite (*.db *.sdb. *sqlite *.db3 *.s3db *sqlite3 *.sl3 *.db2 *.s2db *.sqlite2 *.sl2)</source>
-        <translation>Все базы данных SQLite (*.db *.sdb. *sqlite *.db3 *.s3db *sqlite3 *.sl3 *.db2 *.s2db *.sqlite2 *.sl2)</translation>
+        <translation type="vanished">Все базы данных SQLite (*.db *.sdb. *sqlite *.db3 *.s3db *sqlite3 *.sl3 *.db2 *.s2db *.sqlite2 *.sl2)</translation>
     </message>
     <message>
-        <location filename="settingsdialog.cpp" line="88"/>
         <source>Enter URL source data...</source>
-        <translation>Введите  URL-адрес исходных данные...</translation>
+        <translation type="vanished">Введите  URL-адрес исходных данные...</translation>
+    </message>
+    <message>
+        <location filename="settingsdialog.cpp" line="98"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#00aa00;&quot;&gt;Successfully connected&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#00aa00;&quot;&gt;Подключено успешно&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
