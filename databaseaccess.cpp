@@ -76,7 +76,7 @@ QVector<Record> DatabaseAccess::getAirways()
     QSqlQuery query(db);
     QVector<Record> airways = QVector<Record>();
 
-    query.exec("SELECT txt_desig FROM public.en_route_rte ORDER BY txt_desig");
+    query.exec("SELECT txt_desig FROM public.en_route_rte WHERE txt_desig <> '' ORDER BY txt_desig");
     while (query.next()) {
         Record record;
         QSqlRecord sqlRecord = query.record();
