@@ -242,8 +242,10 @@ void MainWindow::showAirways()
                 setCenterMap = true;
             }
             point["coordinate"] = QVariant(QPointF(lat, lon));
-            point["info"] = QVariant(QString("%1\n%2").arg(filterPointsModel->index(row, 3).data().toString().right(1) + filterPointsModel->index(row, 3).data().toString().remove(-1, 1),
-                                                           filterPointsModel->index(row, 4).data().toString().right(1) + filterPointsModel->index(row, 4).data().toString().remove(-1, 1)));        // Set coordinate for label on map
+            QString latStr = filterPointsModel->index(row, 3).data().toString();
+            QString lonStr = filterPointsModel->index(row, 4).data().toString();
+            point["info"] = QVariant(QString("%1\n%2").arg((latStr.left(2).toInt() > 0 ? latStr.prepend("N") : latStr.prepend("S")),
+                                                           (lonStr.left(2).toInt() > 0 ? lonStr.prepend("E") : latStr.prepend("W"))));        // Set coordinate for label on map
             point["code"] = QVariant(codePoint);
             point["distance"] = QVariant(distance);
             point["mpu"] = QVariant(mpu);

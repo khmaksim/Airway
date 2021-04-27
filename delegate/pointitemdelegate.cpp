@@ -23,7 +23,16 @@ void PointItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
     if (index.column() > 0 && index.column() < 5)
         opt.text = index.data().toString();
-    if (index.row() < index.model()->rowCount() - 1) {
+
+    if (index.row() < index.model()->rowCount()) {
+        if (index.column() == 3) {
+            int degree = opt.text.left(2).toInt();
+            opt.text = (degree > 0 && degree < 90 ? opt.text.prepend("N") : opt.text = opt.text.prepend("S"));
+        }
+        if (index.column() == 4) {
+            int degree = (opt.text.length() == 7 ? opt.text.left(3).toInt() : opt.text.left(2).toInt());
+            opt.text = (degree > 0 && degree < 180 ? opt.text.prepend("E") : opt.text = opt.text.prepend("W"));
+        }
         if (index.column() == 5)
             opt.text = pointsModel->getMagneticTrackAngle(sourceIndex).join('/');
         if (index.column() == 6)
