@@ -1,4 +1,4 @@
-#-------------------------------------------------
+```#-------------------------------------------------
 #
 # Project created by QtCreator 2019-04-29T11:00:15
 #
@@ -38,7 +38,7 @@ SOURCES += \
     mainwindow.cpp \
     delegate\listitemdelegate.cpp \
     delegate\checkboxitemdelegate.cpp \
-    model\searchmodel.cpp \
+    model\filterairfieldsmodel.cpp \
     model\pointsmodel.cpp \
     model\filterpointsmodel.cpp \
     settingsdialog.cpp \
@@ -51,7 +51,7 @@ HEADERS += \
     mainwindow.h \
     delegate\listitemdelegate.h \
     delegate\checkboxitemdelegate.h \
-    model\searchmodel.h \
+    model\filterairfieldsmodel.h \
     model\pointsmodel.h \
     model\filterpointsmodel.h \
     helper.h \

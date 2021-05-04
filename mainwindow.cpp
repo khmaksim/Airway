@@ -10,7 +10,6 @@
 #include <QFileDialog>
 #include <QSaveFile>
 #include <QLineEdit>
-#include <QSortFilterProxyModel>
 #include <QMessageBox>
 #include <QDir>
 #include <QProgressDialog>
@@ -19,6 +18,7 @@
 #include "helper.h"
 #include "settingsdialog.h"
 #include "model/filterpointsmodel.h"
+#include "model/filterairfieldsmodel.h"
 #include "model/pointsmodel.h"
 #include "delegate/pointitemdelegate.h"
 #include "delegate/checkboxitemdelegate.h"
@@ -32,10 +32,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     m_airwaysModel = new QStandardItemModel(this);
-    QSortFilterProxyModel *searchAirfieldsModel = new QSortFilterProxyModel(this);
-    searchAirfieldsModel->setSourceModel(m_airwaysModel);
-    searchAirfieldsModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-    ui->airwayListView->setModel(searchAirfieldsModel);
+    FilterAirfieldsModel *filterAirfieldsModel = new FilterAirfieldsModel(this);
+    filterAirfieldsModel->setSourceModel(m_airwaysModel);
+    filterAirfieldsModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    ui->airwayListView->setModel(filterAirfieldsModel);
 
     m_pointsModel = new PointsModel(this);
     FilterPointsModel *filterPointsModel = new FilterPointsModel(this);
@@ -80,13 +80,15 @@ MainWindow::MainWindow(QWidget *parent) :
     readSettings();
 
     connect(ui->airwayListView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(filterPoints(const QModelIndex&)));
-    connect(ui->searchLineEdit, SIGNAL(textChanged(const QString&)), searchAirfieldsModel, SLOT(setFilterRegExp(QString)));
+    connect(ui->searchLineEdit, SIGNAL(textChanged(const QString&)), filterAirfieldsModel, SLOT(setFilterRegExp(QString)));
     connect(m_pointsModel, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)), this, SLOT(enabledToolButton()));
     connect(exportButton, SIGNAL(clicked(bool)), this, SLOT(exportToFile()));
     connect(displayOnMapButton, SIGNAL(clicked(bool)), this, SLOT(showAirways()));
     connect(settingsButton, SIGNAL(clicked(bool)), this, SLOT(showSettings()));
     connect(groupHeaderView, SIGNAL(clickedCheckBox(bool)), this, SLOT(setCheckedAllRowTable(bool)));
     connect(DatabaseAccess::getInstance(), SIGNAL(notificationConnected(const QString&)), this, SLOT(showMessageErrorConnectDatabase(const QString&)));
+    connect(ui->uncheckAirwayButton, &QPushButton::clicked, this, &MainWindow::uncheckAirwayInList);
+    connect(ui->showActiveAirwayButton, SIGNAL(clicked(bool)), filterAirfieldsModel, SLOT(showOnlySelected(bool)));
 
     if (!DatabaseAccess::getInstance()->connect())
         showSettings();
@@ -355,4 +357,14 @@ void MainWindow::setChecked(bool checked, QString codeAirway, QString codePoint)
 void MainWindow::showMessageErrorConnectDatabase(const QString &message)
 {
     QMessageBox::warning(this, tr("Connecting to this database"), message);
+}
+
+void MainWindow::uncheckAirwayInList()
+{
+    for (int row = 0; row < m_airwaysModel->rowCount(); row++) {
+        if (m_airwaysModel->data(m_airwaysModel->index(row, 0), Qt::CheckStateRole).toInt() == Qt::Checked) {
+            m_airwaysModel->setData(m_airwaysModel->index(row, 0), Qt::Unchecked, Qt::CheckStateRole);
+            this->filterPoints(m_airwaysModel->index(row, 0));
+        }
+    }
 }

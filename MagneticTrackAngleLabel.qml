@@ -11,6 +11,7 @@ MapQuickItem {
     zoomLevel: 6.7
 
     onAngleRouteChanged: {
+        console.log(angleRoute, direction);
         if (direction === "forward") {
             if (angleRoute > 0 && angleRoute <= 90) {
                 anchorPoint.x = labelMagneticTrackAngle.width

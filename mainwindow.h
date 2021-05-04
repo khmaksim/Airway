@@ -49,6 +49,7 @@ class MainWindow : public QMainWindow
         void setCheckedAllRowTable(bool checked = false);
         void setChecked(bool checked, QString codeAirway, QString codePoint);
         void showMessageErrorConnectDatabase(const QString &message);
+        void uncheckAirwayInList();
 
     private:
         QMap<QObject*, qint64> bytesTotalFiles;
