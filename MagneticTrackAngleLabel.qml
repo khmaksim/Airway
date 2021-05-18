@@ -14,7 +14,7 @@ MapQuickItem {
         console.log(angleRoute, direction);
         if (direction === "forward") {
             if (angleRoute > 0 && angleRoute <= 90) {
-                anchorPoint.x = labelMagneticTrackAngle.width
+                anchorPoint.x = labelMagneticTrackAngle.x
                 anchorPoint.y = labelMagneticTrackAngle.height
             } else if (angleRoute > 90 && angleRoute <= 180) {
                 anchorPoint.x = labelMagneticTrackAngle.x
@@ -32,13 +32,14 @@ MapQuickItem {
 //                anchorPoint.x = labelMagneticTrackAngle.width
 //                anchorPoint.y = labelMagneticTrackAngle.height
             } else if (angleRoute > 90 && angleRoute <= 180) {
-                anchorPoint.x = labelMagneticTrackAngle.x
-                anchorPoint.y = labelMagneticTrackAngle.y
+                anchorPoint.x = layoutMagneticTrackAngle.x
+                anchorPoint.y = layoutMagneticTrackAngle.y
             } else if (angleRoute > 180 && angleRoute <= 270) {
+                anchorPoint.x = layoutMagneticTrackAngle.width + 2
 //                anchorPoint.x = -(labelMagneticTrackAngle.width + 1)
 //                anchorPoint.y = labelMagneticTrackAngle.height + 1
             } else if (angleRoute > 270 && angleRoute <= 360) {
-                anchorPoint.x = labelMagneticTrackAngle.width
+                anchorPoint.x = layoutMagneticTrackAngle.width + 2
 //                anchorPoint.y = labelMagneticTrackAngle.height
             }
         }
@@ -50,6 +51,7 @@ MapQuickItem {
     }
 
     sourceItem: RowLayout {
+        id: layoutMagneticTrackAngle
         spacing: 2
         property double sizeArrow: labelMagneticTrackAngle.height / 3.5
 
@@ -68,8 +70,6 @@ MapQuickItem {
             text: magneticTrackAngle
             font.pixelSize: 6
             horizontalAlignment: Text.AlignLeft
-//            Layout.fillHeight: True
-//            Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
         }
         Image {

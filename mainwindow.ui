@@ -47,14 +47,14 @@
             <item row="2" column="1">
              <widget class="QPushButton" name="uncheckAirwayButton">
               <property name="text">
-               <string>PushButton</string>
+               <string>Uncheck</string>
               </property>
              </widget>
             </item>
             <item row="2" column="0">
              <widget class="QPushButton" name="showActiveAirwayButton">
               <property name="text">
-               <string>PushButton</string>
+               <string>Show marked</string>
               </property>
               <property name="checkable">
                <bool>true</bool>

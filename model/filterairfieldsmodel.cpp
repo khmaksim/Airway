@@ -6,7 +6,6 @@ bool FilterAirfieldsModel::filterAcceptsRow(int sourceRow, const QModelIndex &so
 {
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
 
-    qDebug() << (!m_onlySelected || sourceModel()->data(index, Qt::CheckStateRole) == Qt::Checked) << (sourceModel()->data(index, Qt::CheckStateRole) == Qt::Checked) << m_onlySelected;
     return (sourceModel()->data(index, Qt::DisplayRole).toString().contains(filterRegExp())
             && (!m_onlySelected || sourceModel()->data(index, Qt::CheckStateRole) == Qt::Checked));
 }

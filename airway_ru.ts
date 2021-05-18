@@ -181,17 +181,17 @@
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="310"/>
+        <location filename="mainwindow.cpp" line="314"/>
         <source>Export to file</source>
         <translation>Экспорт в файл</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="310"/>
+        <location filename="mainwindow.cpp" line="314"/>
         <source>Data export completed successfully.</source>
         <translation>Экспорт данных выполнен успешно.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="355"/>
+        <location filename="mainwindow.cpp" line="359"/>
         <source>Connecting to this database</source>
         <translation>Подключение к базе данных</translation>
     </message>
@@ -200,25 +200,35 @@
         <translation type="vanished">Поиск...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="274"/>
+        <location filename="mainwindow.cpp" line="278"/>
         <source>Save file</source>
         <translation>Сохранить файл</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="14"/>
         <location filename="mainwindow.ui" line="44"/>
-        <location filename="mainwindow.cpp" line="212"/>
+        <location filename="mainwindow.cpp" line="214"/>
         <source>Airways</source>
         <oldsource>Airway</oldsource>
         <translation>Воздушные трассы</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="53"/>
+        <location filename="mainwindow.ui" line="50"/>
+        <source>Uncheck</source>
+        <translation>Снять флаг</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="57"/>
+        <source>Show marked</source>
+        <translation>Показать отмеченные</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="90"/>
         <source>Search airway (code airway)</source>
         <translation>Поиск воздушной трассы</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="74"/>
+        <location filename="mainwindow.ui" line="104"/>
         <source>Points</source>
         <translation>Точки</translation>
     </message>
